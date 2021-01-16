@@ -14,48 +14,15 @@ services:
         #apt-get install -y lib32z1 expect telnet sudo
         apt-get install -y sudo
         echo 'linuxgsm  ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/lgsm
-        #
-        # START of server startup script
-        #
-        cat > /custom-rust-server.sh <<'EOF'
-        #!/bin/bash
-        set -ex
-        function rand_password() {
-          tr -dc -- '0-9a-zA-Z' < /dev/urandom | head -c12;echo
-        }
-
-        [ -f ./linuxgsm.sh ] || cp /linuxgsm.sh ./
-        [ -x ./rustserver ] || ./linuxgsm.sh rustserver
-        yes Y | ./rustserver install
-        [ -f ./lgsm/mods/rustoxide-files.txt ] || ./rustserver mods-install <<< $$'rustoxide\n'
-        ./rustserver mods-update
-
-        # disable EAC allowing Linux clients
-        server_cfg=serverfiles/server/rustserver/cfg/server.cfg
-        grep -F -- server.secure "$$server_cfg" || echo server.secure 0 >> "$$server_cfg"
-        grep -F -- server.encryption "$$server_cfg" || echo server.encryption 0 >> "$$server_cfg"
-
-        if [ ! -f rcon_pass ]; then
-          rand_password > rcon_pass
-        fi
-        echo 'rconpassword is...'
-        grep rconpassword lgsm/config-lgsm/rustserver/rustserver.cfg || echo rconpassword="$$(<rcon_pass)" >> lgsm/config-lgsm/rustserver/rustserver.cfg
-
-        # start rust server
-        ./rustserver start
-        echo Sleeping for 30 seconds...
-        sleep 30
-        tail -f log/*/*.log
-
-        EOF
-        #
-        # END of server startup script
-        #
-        chmod 755 /custom-rust-server.sh
+        echo 'export ENABLE_RUST_EAC="${ENABLE_RUST_EAC:-}"' > /tmp/rust-docker-environment.sh
+        chown linuxgsm: /home/linuxgsm /home/linuxgsm/serverfiles /home/linuxgsm/serverfiles/oxide
+        chown -R linuxgsm: /home/linuxgsm/serverfiles/oxide/config
         su - linuxgsm -c /custom-rust-server.sh
     volumes:
       - lgsm:/home/linuxgsm
+      - ./utils/custom-rust-server.sh:/custom-rust-server.sh:ro
+      - ./plugin-configs/:/home/linuxgsm/serverfiles/oxide/config/:rw
+
     ports:
-      - 0.0.0.0:25580:25580
-      - 0.0.0.0:28016:28016
+      - ${RUST_RCON_INTERFACE:-127.0.0.1}:28016:28016
       - 0.0.0.0:28015:28015/udp

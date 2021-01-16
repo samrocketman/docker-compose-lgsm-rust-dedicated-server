@@ -15,6 +15,15 @@ services:
         apt-get install -y sudo
         echo 'linuxgsm  ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/lgsm
         echo 'export ENABLE_RUST_EAC="${ENABLE_RUST_EAC:-}"' > /tmp/rust-docker-environment.sh
+        lgsm_uid="$$(id -u linuxgsm)"
+        lgsm_gid="$$(id -g linuxgsm)"
+        if [ ! "$$lgsm_uid" = 1000 ]; then
+          sed -i "s/:$$lgsm_uid:$$lgsm_gid:/:1000:1000:/" /etc/passwd
+          sed -i "s/:$$lgsm_gid:/:1000:/" /etc/group
+        fi
+        if [ ! "$$(stat -c '%U' /home/linuxgsm)" = linuxgsm ]; then
+          chown -R linuxgsm: /home/linuxgsm
+        fi
         chown linuxgsm: /home/linuxgsm /home/linuxgsm/serverfiles /home/linuxgsm/serverfiles/oxide
         chown -R linuxgsm: /home/linuxgsm/serverfiles/oxide/config
         su - linuxgsm -c /custom-rust-server.sh

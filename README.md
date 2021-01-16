@@ -59,12 +59,12 @@ export ENABLE_RUST_EAC=1
 
 # Road Map
 
-- [x] Initial working vanilla server
-- [X] Basic admin actions like shell login and RCON access
-- [ ] Support for automatically updating Oxide plugins
-- [ ] Support for custom Oxide plugins
-- [ ] Support for customizing initial Map generation.
-- [ ] Support for custom Maps.
+- :heavy_check_mark: Initial working vanilla server
+- :heavy_check_mark: Basic admin actions like shell login and RCON access
+- :x: Support for automatically updating Oxide plugins
+- :x: Support for custom Oxide plugins
+- :x: Support for customizing initial Map generation.
+- :x: Support for custom Maps.
 
 [docker]: https://docs.docker.com/engine/install/
 [git]: https://git-scm.com/

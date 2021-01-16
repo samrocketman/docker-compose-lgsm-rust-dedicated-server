@@ -21,4 +21,8 @@ then enable EAC with the following shell variable.
 export ENABLE_RUST_EAC=1
 ```
 
+# Road Map
+
+- [ ] Initial working vanilla server
+- [ ] Basic admin actions like shell login and RCON access
 [docker]: https://docs.docker.com/engine/install/

@@ -24,7 +24,7 @@ export ENABLE_RUST_EAC=1
 # Road Map
 
 - [x] Initial working vanilla server
-- [ ] Basic admin actions like shell login and RCON access
+- [X] Basic admin actions like shell login and RCON access
 - [ ] Support for automatically updating Oxide plugins
 - [ ] Support for custom Oxide plugins
 - [ ] Support for customizing initial Map generation.

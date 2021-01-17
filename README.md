@@ -4,6 +4,19 @@ This project combines Docker, Rust Dedicated Server, and LGSM all in one!  The
 intention is to lower the barrier of entry for Linux users to get a Rust
 dedicated server up quickly with little to  no effort.
 
+# Connecting to your server
+
+By default your server is forwarding port 28015/UDP to all interfaces so that
+you can port forward it for friends.
+
+If you're playing from Proton on Linux, then press F1 to open console and
+connect with:
+
+    client.connect 127.0.0.1:28015
+
+You may need to enter a domain name or alternate IP address if you're playing
+rust from a different computer.
+
 # Prerequisites
 
 - Lots of RAM, especially if you're playing on the same machine as the dedicated

@@ -6,15 +6,43 @@ services:
     init: true
     user: root
     image: gameservermanagers/linuxgsm-docker
+    restart: unless-stopped
+    cpu_percent: 75
     command:
       - /bin/bash
       - -exc
       - |
+        # FUNCTIONS
+        function add_rust_environment() {
+          if [ -z "$$2" ]; then
+            return
+          fi
+          echo "export $$1='$$2'" >> /tmp/rust-docker-environment.sh
+        }
+        function get_video_gid() {
+          find /dev/dri -maxdepth 1 -type c | head -n1 | xargs stat -c %g
+        }
+        function get_video_group() {
+          local gid="$$(get_video_gid)"
+          awk -v gid="$$gid" -F: '$$3 == gid { print $$1 }' /etc/group
+        }
+        # MAIN
         apt-get update
-        #apt-get install -y lib32z1 expect telnet sudo
-        apt-get install -y sudo
+        apt-get install -y sudo dos2unix vim
+
+        #grant access to video card for direct rendering
+        vid="$$(get_video_group)"
+        if [ -z "$$vid" ]; then
+          groupadd -g "$$(get_video_gid)" videocard
+          vid=videocard
+        fi
+        usermod -a -G "$$vid" linuxgsm
+
+        # grant temporary sudo access for initial setup
         echo 'linuxgsm  ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/lgsm
-        echo 'export ENABLE_RUST_EAC="${ENABLE_RUST_EAC:-}"' > /tmp/rust-docker-environment.sh
+        add_rust_environment ENABLE_RUST_EAC "${ENABLE_RUST_EAC:-}"
+        #add_rust_environment RUST_seed "${RUST_seed:-}"
+        #add_rust_environment RUST_description "${RUST_description:-}"
         lgsm_uid="$$(id -u linuxgsm)"
         lgsm_gid="$$(id -g linuxgsm)"
         if [ ! "$$lgsm_uid" = 1000 ]; then
@@ -35,3 +63,5 @@ services:
     ports:
       - ${RUST_RCON_INTERFACE:-127.0.0.1}:28016:28016
       - 0.0.0.0:28015:28015/udp
+    devices:
+      - /dev/dri:/dev/dri

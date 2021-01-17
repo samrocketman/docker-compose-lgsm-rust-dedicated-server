@@ -35,6 +35,8 @@ fi
 # remove passwordless sudo access since setup is complete
 sudo rm -f /etc/sudoers.d/lgsm
 
+/get-or-update-plugins.sh
+
 # start rust server
 ./rustserver start
 echo Sleeping for 30 seconds...

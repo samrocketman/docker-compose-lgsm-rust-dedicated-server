@@ -4,8 +4,8 @@
 #   Supports logging into the server.
 
 set -e
-plugin_dir=plugins
-plugin_txt=plugins.txt
+plugin_dir=/home/linuxgsm/serverfiles/oxide/plugins
+plugin_txt=/plugins.txt
 
 # state variables
 custom_plugins=()
@@ -66,7 +66,6 @@ function remove_plugins() {
     fi
     plugin_name="${plugin##*/}"
     plugin_name="${plugin_name%.cs}"
-    echo $plugin_name
     if ! curl -sIfLo /dev/null https://umod.org/plugins/"${plugin_name}".cs; then
       custom_plugins+=( "${plugin_name}")
       continue

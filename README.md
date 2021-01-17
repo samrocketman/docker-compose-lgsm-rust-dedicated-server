@@ -44,6 +44,9 @@ the root of this repository.
 
     ./admin-actions/shell-login.sh
 
+    # alternately if you need root shell access
+    ./admin-actions/shell-login.sh root
+
 If you want to log into the Rust web RCON interface, then run the following
 command.
 

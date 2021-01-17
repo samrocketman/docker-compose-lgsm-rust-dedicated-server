@@ -32,7 +32,6 @@ services:
       - ./utils/custom-rust-server.sh:/custom-rust-server.sh:ro
       - ./plugin-configs/:/home/linuxgsm/serverfiles/oxide/config/:rw
       - ./utils/get-or-update-plugins.sh:/get-or-update-plugins.sh:ro
-      - ./plugins.txt:/plugins.txt:rw
     ports:
       - ${RUST_RCON_INTERFACE:-127.0.0.1}:28016:28016
       - 0.0.0.0:28015:28015/udp

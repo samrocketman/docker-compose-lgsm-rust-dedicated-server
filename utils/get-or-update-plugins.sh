@@ -5,7 +5,7 @@
 
 set -e
 plugin_dir=/home/linuxgsm/serverfiles/oxide/plugins
-plugin_txt=/plugins.txt
+plugin_txt=/home/linuxgsm/serverfiles/oxide/config/plugins.txt
 
 # state variables
 custom_plugins=()

@@ -80,8 +80,8 @@ export ENABLE_RUST_EAC=1
 # Server Mods
 
 This server automatically adds and updates uMod oxide plugins through an easy to
-use `plugins.txt` file.  Add what plugins you would like in your rust server;
-one plugin per line.
+use `plugin-configs/plugins.txt` file.  Add what plugins you would like in your
+rust server; one plugin per line.
 
 For example, let's say you want the following plugins:
 
@@ -89,10 +89,11 @@ For example, let's say you want the following plugins:
 * [Chest Stacks](https://umod.org/plugins/chest-stacks)
 
 The download links for both of those plugins would be `Backpacks.cs` and
-`ChestStacks.cs`.  Your `plugins.txt` would need to have the following contents.
+`ChestStacks.cs`.  Your `plugin-configs/plugins.txt` would need to have the
+following contents.
 
 ```bash
-# example plugins.txt
+# example plugin-configs/plugins.txt
 # code comments are supported along with blank lines
 Backpacks
 ChestStacks
@@ -109,24 +110,29 @@ Use console command:
 
     oxide.reload plugin_name
 
-Server mods are supported by oxide plugins.  Add your oxide plugins to
-`plugins.txt` and then start the server normally.  Every time the server start
-plugin updates are checked and downloaded.
+Or to reload all plugins:
 
-If you remove a plugin from `plugins.txt`, then it will be deleted from your
-server automatically.
+    oxide.reload *
+
+Server mods are supported by oxide plugins.  Add your oxide plugins to
+`plugin-configs/plugins.txt` and then start the server normally.  Every time the
+server start plugin updates are checked and downloaded.
+
+If you remove a plugin from `plugin-configs/plugins.txt`, then it will be
+deleted from your server automatically.
 
 Use the uMode download name of the plugin.  For example, if you download from
-uMod `Backpacks.cs`, then you need only add `Backpacks` to `plugins.txt`.
+uMod `Backpacks.cs`, then you need only add `Backpacks` to
+`plugin-configs/plugins.txt`.
 
 ### plugins.txt code comments
 
 Lines that start with `#` and blank lines are automatically skipped in
-`plugins.txt`.
+`plugin-configs/plugins.txt`.
 
-You can remove Rust server plugins from `plugins.txt` by starting the line with
-a `#`.  This allows you to delete the plugin from the server but also keep it
-around in case  you want to re-enable it later.
+You can remove Rust server plugins from `plugin-configs/plugins.txt` by starting
+the line with a `#`.  This allows you to delete the plugin from the server but
+also keep it around in case  you want to re-enable it later.
 
 # Road Map
 

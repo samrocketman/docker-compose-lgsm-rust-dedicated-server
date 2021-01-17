@@ -17,6 +17,7 @@ dedicated server up quickly with little to  no effort.
 - Install [Docker on Linux][docker].  Docker on Windows or Mac would probably
   work but is entirely untested.  Docker for Mac has known performance issues
   unrelated to Rust.
+- Install [docker-compose][compose].  This typically comes separate from Docker.
 
 # Server Uptime Management
 
@@ -120,5 +121,6 @@ around in case  you want to re-enable it later.
 - :x: Support for customizing initial Map generation.
 - :x: Support for custom Maps.
 
+[compose]: https://docs.docker.com/compose/install/
 [docker]: https://docs.docker.com/engine/install/
 [git]: https://git-scm.com/

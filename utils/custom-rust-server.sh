@@ -44,10 +44,12 @@ function apply-setting() {
   sed -i "/^ *$2/d" $1
   echo "$3" >> "$1"
 }
-if [ -z "$seed" ] || ! check-range "$seed" 1 2147483647; then
+if ( [ -z "$seed" ] || ! check-range "${seed:-invalid}" 1 2147483647 ) &&
+   ! grep -F -- 'seed=' "$lgsm_cfg"; then
   # random seed; if seed is unset or invalid
   seed="$(python -c 'from random import randrange;print(randrange(2147483647))')"
 fi
+
 
 if [ -z "$worldsize" ] || ! check-range "$worldsize" 1000 6000; then
   worldsize=3000
@@ -57,7 +59,9 @@ if [ -z "$maxplayers" ] || ! check-range "$maxplayers" 1 1000000; then
 fi
 servername="${servername:-Rust}"
 # apply user-customized settings from rust-environment.sh
-apply-setting "$lgsm_cfg" seed "seed=$seed"
+if [ -n "$seed" ]; then
+  apply-setting "$lgsm_cfg" seed "seed=$seed"
+fi
 apply-setting "$lgsm_cfg" worldsize "worldsize=$worldsize"
 apply-setting "$lgsm_cfg" maxplayers "maxplayers=$maxplayers"
 apply-setting "$lgsm_cfg" servername "servername=\"$servername\""
@@ -100,4 +104,6 @@ sudo rm -f /etc/sudoers.d/lgsm
 ./rustserver start
 echo Sleeping for 30 seconds...
 sleep 30
-tail -f log/*/*.log
+tail -f log/console/rustserver-console.log \
+        log/script/rustserver-steamcmd.log \
+        log/script/rustserver-script.log

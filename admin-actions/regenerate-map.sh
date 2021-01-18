@@ -16,6 +16,7 @@ docker-compose exec -T lgsm \
     -maxdepth 1 \
     -type f \( -name '*.map' -o -name '*.sav*' \) \
     -exec rm -f {} +
+docker-compose exec -T lgsm sed -i '/^ *seed=/d' lgsm/config-lgsm/rustserver/rustserver.cfg
 docker-compose down
 docker-compose up -d
 echo 'The server has been rebooted with docker-compose up -d.'

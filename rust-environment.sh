@@ -1,6 +1,6 @@
-#
+######################
 # SERVER BOOT SETTINGS
-#
+######################
 
 # settings take effect every time the server boots
 
@@ -13,9 +13,9 @@
 # range: unknown, used to recover a known setting from an existing map.
 #salt=
 
-#
+######################
 # INITIAL MAP SETTINGS
-#
+######################
 
 # only affects when a server is first started or map is regenerated.
 
@@ -24,4 +24,4 @@
 #seed=1
 
 # default: 3000, range: 1000-6000, map size in meters.
-#worldsize=3600
+#worldsize=3000

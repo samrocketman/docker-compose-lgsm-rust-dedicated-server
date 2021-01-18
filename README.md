@@ -159,8 +159,8 @@ also keep it around in case  you want to re-enable it later.
 - :heavy_check_mark: Basic admin actions like shell login and RCON access
 - :heavy_check_mark: Support for adding server mods and automatic mod updates
 - :heavy_check_mark: Limit server resources
+- :heavy_check_mark: Support for customizing initial Map generation on first time startup.
 - :x: Support for custom server mods (Oxide plugins)
-- :x: Support for customizing initial Map generation on first time startup.
 - :x: Support for custom Maps.
 
 [compose]: https://docs.docker.com/compose/install/

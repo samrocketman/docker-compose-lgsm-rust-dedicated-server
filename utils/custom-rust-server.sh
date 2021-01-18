@@ -58,7 +58,9 @@ fi
 servername="${servername:-Rust}"
 # apply user-customized settings from rust-environment.sh
 apply-setting "$lgsm_cfg" seed "seed=$seed"
-apply-setting "$lgsm_cfg" seed "seed=$seed"
+apply-setting "$lgsm_cfg" worldsize "worldsize=$worldsize"
+apply-setting "$lgsm_cfg" maxplayers "maxplayers=$maxplayers"
+apply-setting "$lgsm_cfg" servername "servername=\"$servername\""
 if [ -n "$salt" ]; then
   apply-setting "$lgsm_cfg" salt "salt=$salt"
 else

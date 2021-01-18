@@ -16,12 +16,6 @@ services:
       - -exc
       - |
         # FUNCTIONS
-        function add_rust_environment() {
-          if [ -z "$$2" ]; then
-            return
-          fi
-          echo "export $$1='$$2'" >> /tmp/rust-docker-environment.sh
-        }
         function get_video_gid() {
           find /dev/dri -maxdepth 1 -type c | head -n1 | xargs stat -c %g
         }
@@ -29,6 +23,7 @@ services:
           local gid="$$(get_video_gid)"
           awk -v gid="$$gid" -F: '$$3 == gid { print $$1 }' /etc/group
         }
+
         # MAIN
         apt-get update
         apt-get install -y sudo dos2unix vim
@@ -60,9 +55,11 @@ services:
         su - linuxgsm -c /custom-rust-server.sh
     volumes:
       - lgsm:/home/linuxgsm
-      - ./utils/custom-rust-server.sh:/custom-rust-server.sh:ro
       - ./plugin-configs/:/home/linuxgsm/serverfiles/oxide/config/:rw
+      - ./custom-plugins/:/custom-plugins/:rw
+      - ./utils/custom-rust-server.sh:/custom-rust-server.sh:ro
       - ./utils/get-or-update-plugins.sh:/get-or-update-plugins.sh:ro
+      - ./rust-environment.sh:/rust-environment.sh:ro
     ports:
       - ${RUST_RCON_INTERFACE:-127.0.0.1}:28016:28016
       - 0.0.0.0:28015:28015/udp

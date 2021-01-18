@@ -85,12 +85,16 @@ server can't use more than these limits.
 
 # Easy Anti-Cheat
 
-By default EAC is disabled for Linux clients.  If you want Windows-only clients,
-then enable EAC with the following shell variable.
+By default EAC is disabled for Linux clients.  Enable EAC with the following
+shell variable in [`rust-environment.sh`](rust-environment.sh).
+
 
 ```bash
 export ENABLE_RUST_EAC=1
 ```
+
+If EAS is enabled, Linux clients will not be able to connect and your server
+will be listed in the server browser
 
 # Server Mods
 

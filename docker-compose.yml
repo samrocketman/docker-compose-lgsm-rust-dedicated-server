@@ -54,6 +54,7 @@ services:
       - ./custom-plugins/:/custom-plugins/:rw
       - ./utils/custom-rust-server.sh:/custom-rust-server.sh:ro
       - ./utils/get-or-update-plugins.sh:/get-or-update-plugins.sh:ro
+      - ./utils/apply-settings.sh:/apply-settings.sh:ro
       - ./rust-environment.sh:/rust-environment.sh:ro
     ports:
       - ${RUST_RCON_INTERFACE:-127.0.0.1}:28016:28016

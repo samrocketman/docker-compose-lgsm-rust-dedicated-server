@@ -7,8 +7,10 @@
 set -ex
 
 [ ! -r /rust-environment.sh ] || source /rust-environment.sh
+server_cfg=serverfiles/server/rustserver/cfg/server.cfg
+lgsm_cfg=lgsm/config-lgsm/rustserver/rustserver.cfg
 
-export ENABLE_RUST_EAC
+export ENABLE_RUST_EAC seed salt worldsize maxplayers servername
 
 function rand_password() {
   tr -dc -- '0-9a-zA-Z' < /dev/urandom | head -c12;echo
@@ -21,13 +23,46 @@ yes Y | ./rustserver install
 ./rustserver mods-update
 
 # disable EAC allowing Linux clients
-server_cfg=serverfiles/server/rustserver/cfg/server.cfg
 if [ -z "${ENABLE_RUST_EAC:-}" ]; then
   grep -F -- server.secure "$server_cfg" || echo server.secure 0 >> "$server_cfg"
   grep -F -- server.encryption "$server_cfg" || echo server.encryption 0 >> "$server_cfg"
 else
   sed -i '/^ *server\.secure/d' "$server_cfg"
   sed -i '/^ *server\.encryption/d' "$server_cfg"
+fi
+
+# Map generation settings
+function check-range() {
+# Usage: check-range NUMBER MIN MAX
+# exits nonzero if outside of range or not a number
+python -c "
+import sys;
+i=int(sys.stdin.read());
+exit(0) if i >= $2 and i <= $3 else exit(1)" &> /dev/null <<< "$1"
+}
+function apply-setting() {
+  sed -i "/^ *$2/d" $1
+  echo "$3" >> "$1"
+}
+if [ -z "$seed" ] || ! check-range "$seed" 1 2147483647; then
+  # random seed; if seed is unset or invalid
+  seed="$(python -c 'from random import randrange;print(randrange(2147483647))')"
+fi
+
+if [ -z "$worldsize" ] || ! check-range "$worldsize" 1000 6000; then
+  worldsize=3000
+fi
+if [ -z "$maxplayers" ] || ! check-range "$maxplayers" 1 1000000; then
+  maxplayers=50
+fi
+servername="${servername:-Rust}"
+# apply user-customized settings from rust-environment.sh
+apply-setting "$lgsm_cfg" seed "seed=$seed"
+apply-setting "$lgsm_cfg" seed "seed=$seed"
+if [ -n "$salt" ]; then
+  apply-setting "$lgsm_cfg" salt "salt=$salt"
+else
+  sed -i '/^ *salt/d' "$lgsm_cfg"
 fi
 
 # Custom Map Support
@@ -51,7 +86,7 @@ if [ ! -f rcon_pass ]; then
   rand_password > rcon_pass
 fi
 (
-  grep rconpassword lgsm/config-lgsm/rustserver/rustserver.cfg || echo rconpassword="$(<rcon_pass)" >> lgsm/config-lgsm/rustserver/rustserver.cfg
+  grep rconpassword "$lgsm_cfg" || echo rconpassword="$(<rcon_pass)" >> "$lgsm_cfg"
 ) &> /dev/null
 
 # remove passwordless sudo access since setup is complete

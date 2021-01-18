@@ -68,6 +68,21 @@ command.
 The script will output your RCON password as well as additional instructions for
 your web browser to access the RCON console.
 
+### Limiting server resources
+
+In the `docker-compose.yml` file, there's two settings you can adjust to limit
+how much CPU and memory the dedicated server is allowed.  By default, it is set
+to dedicated server recommended values:
+
+```yaml
+cpu_count: 2
+mem_limit: 8gb
+```
+
+You can adust the resources to your liking.  Generally, I recommend to not set
+the server below `2` CPUs and  `4gb` of memory (RAM).  These policies ensure the
+server can't use more than these limits.
+
 # Easy Anti-Cheat
 
 By default EAC is disabled for Linux clients.  If you want Windows-only clients,
@@ -139,6 +154,7 @@ also keep it around in case  you want to re-enable it later.
 - :heavy_check_mark: Initial working vanilla server
 - :heavy_check_mark: Basic admin actions like shell login and RCON access
 - :heavy_check_mark: Support for adding server mods and automatic mod updates
+- :heavy_check_mark: Limit server resources
 - :x: Support for custom server mods (Oxide plugins)
 - :x: Support for customizing initial Map generation on first time startup.
 - :x: Support for custom Maps.

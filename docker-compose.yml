@@ -3,11 +3,14 @@ volumes:
   lgsm:
 services:
   lgsm:
+    # Limiting server resources
+    cpu_count: 2
+    mem_limit: 8gb
+    # other stuf
     init: true
     user: root
     image: gameservermanagers/linuxgsm-docker
     restart: unless-stopped
-    cpu_percent: 75
     command:
       - /bin/bash
       - -exc

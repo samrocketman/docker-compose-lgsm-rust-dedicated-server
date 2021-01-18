@@ -121,9 +121,9 @@ ChestStacks
 ### Updating plugin configuration
 
 Plugins automatically generate plugin config which is accessible by editing
-files in the `plugin-configs/` directory.  If you edit a JSON config you can
-open up the web management RCON console to reload the plugin (See [Server Admin
-Actions](#server-admin-actions) for how to access RCON console).
+files in the [`plugin-configs/`](plugin-configs/) directory.  If you edit a JSON
+config you can open up the web management RCON console to reload the plugin (See
+[Server Admin Actions](#server-admin-actions) for how to access RCON console).
 
 Use console command:
 

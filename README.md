@@ -1,8 +1,7 @@
 # Dockerized LGSM Rust Dedicated Server
 
-This project combines Docker, Rust Dedicated Server, and LGSM all in one!  The
-intention is to lower the barrier of entry for Linux users to get a Rust
-dedicated server up quickly with little to  no effort.
+This project combines Docker, Rust Dedicated Server, and [Linux GSM][lgsm] all
+in one!  Self-hosted Rust dedicated server management made easy.
 
 - [Play on your server](#play-on-your-server)
 - [Prerequisites](#prerequisites)
@@ -298,3 +297,4 @@ directory is what enables the Custom Map logic.
 [compose]: https://docs.docker.com/compose/install/
 [docker]: https://docs.docker.com/engine/install/
 [git]: https://git-scm.com/
+[lgsm]: https://linuxgsm.com/

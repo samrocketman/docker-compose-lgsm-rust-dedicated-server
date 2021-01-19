@@ -22,3 +22,10 @@
 
 # default: 3000, range: 1000-6000, map size in meters.
 #worldsize=3000
+
+# if using the custom-maps/ folder to self-host a map and you're playing
+# multiplayer, then uncomment this to customize the frontend.
+#MAP_BASE_URL=http://localhost:8000/
+
+
+#CUSTOM_MAP_URL=https://some-url.com/some-map.map

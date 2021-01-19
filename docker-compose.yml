@@ -59,5 +59,6 @@ services:
     ports:
       - ${RUST_RCON_INTERFACE:-127.0.0.1}:28016:28016
       - 0.0.0.0:28015:28015/udp
+      - 0.0.0.0:8000:8000/tcp
 #    devices:
 #      - /dev/dri:/dev/dri

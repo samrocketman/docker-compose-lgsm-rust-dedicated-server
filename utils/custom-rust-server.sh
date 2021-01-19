@@ -6,10 +6,6 @@
 
 set -ex
 
-
-export ENABLE_RUST_EAC seed salt worldsize maxplayers servername
-
-
 [ -f ./linuxgsm.sh ] || cp /linuxgsm.sh ./
 [ -x ./rustserver ] || ./linuxgsm.sh rustserver
 yes Y | ./rustserver install
@@ -22,7 +18,6 @@ fi
 sudo rm -f /etc/sudoers.d/lgsm
 
 /apply-settings.sh
-mkdir -p serverfiles/oxide/plugins
 /get-or-update-plugins.sh
 
 # start rust server

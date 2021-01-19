@@ -3,6 +3,7 @@
 set -ex
 
 [ ! -r /rust-environment.sh ] || source /rust-environment.sh
+export ENABLE_RUST_EAC seed salt worldsize maxplayers servername
 server_cfg=serverfiles/server/rustserver/cfg/server.cfg
 lgsm_cfg=lgsm/config-lgsm/rustserver/rustserver.cfg
 

@@ -9,6 +9,9 @@ plugin_txt=/home/linuxgsm/serverfiles/oxide/config/plugins.txt
 if [ ! -f "$plugin_txt" ];  then
   plugin_txt=/dev/null
 fi
+if [ ! -d "$plugin_dir" ]; then
+  mkdir -p "$plugin_dir"
+fi
 
 # state variables
 custom_plugins=()

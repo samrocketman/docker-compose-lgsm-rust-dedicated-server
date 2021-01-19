@@ -4,6 +4,26 @@ This project combines Docker, Rust Dedicated Server, and LGSM all in one!  The
 intention is to lower the barrier of entry for Linux users to get a Rust
 dedicated server up quickly with little to  no effort.
 
+- [Play on your server](#play-on-your-server)
+- [Prerequisites](#prerequisites)
+- [Getting started](#getting-started)
+- [Server power management](#server-power-management)
+  - [Starting the server](#starting-the-server)
+  - [Graceful shutdown](#graceful-shutdown)
+  - [Uninstallation](#uninstallation)
+- [Game Server Administration](#game-server-administration)
+  - [Login shell](#login-shell)
+  - [RCON: Remote Admin Console](#rcon-remote-admin-console)
+  - [Limiting server resources](#limiting-server-resources)
+  - [Easy Anti-Cheat](#easy-anti-cheat)
+- [Server Mods](#server-mods)
+  - [Oxide mods](#oxide-mods)
+  - [Custom mods](#custom-mods)
+  - [Updating mod configuration](#updating-mod-configuration)
+- [Customize Map](#customize-map)
+  - [Generated Maps](#generated-maps)
+  - [Custom Maps](#custom-maps)
+
 # Play on your server
 
 By default your server is forwarding port `28015/UDP` to all interfaces so that
@@ -144,7 +164,8 @@ will be listed in the in-game server browser.
 
 # Server Mods
 
-[Oxide mods](https://umod.org/) and custom mods are supported.
+[Oxide plugins](https://umod.org/) and custom mods are supported.  I use the
+term mods and plugins interchangeably.
 
 Oxide mods are installed and updated automatically on every server start.
 However, if you have a custom mod that has a name conflict with an official
@@ -175,12 +196,41 @@ ChestStacks
 When the server boots, the mods will be automatically downloaded from uMod.  If
 they already exist, then updates will be checked instead.
 
+If you edit `mod-configs/plugins.txt`, then you can reload plugins without
+restarting the server.  Run the following command.
+
+    ./admin/get-or-update-oxide-plugins.sh
+
+If you remove a plugin from `mod-configs/plugins.txt`, then it will be
+deleted from your server automatically.
+
+You can also remove mods from `mod-configs/plugins.txt` by starting the line
+with a `#`.  This allows you to delete the plugin from the server but also keep
+it around in case you want to re-enable it later.
+
+### Custom mods
+
+If you're writing your own custom mod, then the file name must end with `.cs`.
+For example, `MyCustomMod.cs`.  Place any `.cs` files into the
+[`custom-mods/`](custom-mods) directory.  Next time your server
+
+
+You can edit your mods as much as you want without affecting the mod used by the
+server.  You can copy and update to your custom mod to the server using the
+following command.
+
+    ./admin/get-or-update-oxide-plugins.sh
+
+If you delete a custom mod from `custom-mods/` folder, then it will be removed
+from the server automatically.
+
 ### Updating mod configuration
 
-Plugins automatically generate plugin config which is accessible by editing
+Oxide Mods automatically generate plugin config which is accessible by editing
 files in the [`mod-configs/`](mod-configs/) directory.  If you edit a JSON
 config you can open up the web management RCON console to reload the plugin (See
-[Server Admin Actions](#server-admin-actions) for how to access RCON console).
+[RCON: Remote Admin Console](#rcon-remote-admin-console) for how to access RCON
+console).
 
 Use console command:
 
@@ -190,25 +240,9 @@ Or to reload all plugins:
 
     oxide.reload *
 
-Server mods are supported by oxide plugins.  Add your oxide plugins to
-`mod-configs/plugins.txt` and then start the server normally.  Every time the
-server start plugin updates are checked and downloaded.
-
-If you remove a plugin from `mod-configs/plugins.txt`, then it will be
-deleted from your server automatically.
-
-Use the uMode download name of the plugin.  For example, if you download from
+Use the uMod download name of the plugin.  For example, if you download from
 uMod `Backpacks.cs`, then you need only add `Backpacks` to
 `mod-configs/plugins.txt`.
-
-### plugins.txt code comments
-
-Lines that start with `#` and blank lines are automatically skipped in
-`mod-configs/plugins.txt`.
-
-You can remove Rust server plugins from `mod-configs/plugins.txt` by starting
-the line with a `#`.  This allows you to delete the plugin from the server but
-also keep it around in case  you want to re-enable it later.
 
 # Customize Map
 
@@ -253,7 +287,7 @@ recommended you prefix all maps with a 4 digit number.  For example,
   time startup.
 - :heavy_check_mark: Support for custom server mods (Oxide plugins)
 - :heavy_check_mark: Support for custom Maps.
-- :x: Improve documentation
+- :heavy_check_mark: Improve documentation
 
 [compose]: https://docs.docker.com/compose/install/
 [docker]: https://docs.docker.com/engine/install/

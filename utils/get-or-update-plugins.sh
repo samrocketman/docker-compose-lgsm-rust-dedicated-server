@@ -26,7 +26,7 @@ function hash_stdin() {
 function upgrade_plugins() {
   local plugin_name
   while read plugin; do
-    if [ -z "$plugin" ]; then
+    if [ -z "$plugin" ] || [ -f "${plugin##*/}" ]; then
       continue
     fi
     local_hash=$(hash_stdin < "${plugin}")
@@ -69,17 +69,21 @@ function remove_plugins() {
     fi
     plugin_name="${plugin##*/}"
     plugin_name="${plugin_name%.cs}"
-    if ! curl -sIfLo /dev/null https://umod.org/plugins/"${plugin_name}".cs; then
-      custom_plugins+=( "${plugin_name}")
-      continue
-    fi
-    if ! grep -v '^ *$\|^ *#' "$plugin_txt" | grep "${plugin_name}" > /dev/null; then
+    if ! grep -v '^ *$\|^ *#' "$plugin_txt" | grep "${plugin_name}" > /dev/null &&
+       [ ! -f "/custom-plugins/${plugin_name}.cs" ]; then
       rm -f "${plugin}"
       removed_plugins+=( "$plugin_name" )
     fi
   done <<< "$(find "$plugin_dir" -type f -name '*.cs')"
 }
 
+function copy_custom_plugins() {
+  if ls /custom-plugins/*.cs &> /dev/null; then
+    rsync -a /custom-plugins/*.cs "${plugin_dir}/"
+  fi
+}
+
+copy_custom_plugins
 upgrade_plugins
 add_new_plugins
 remove_plugins
@@ -108,8 +112,13 @@ if [ "${#removed_plugins[@]}" -gt 0 ]; then
 else
   echo 'No plugins deleted.'
 fi
-if [ "${#custom_plugins[@]}" -gt 0 ]; then
-  echo 'The following custom plugins were ignored:'
+
+if ls /custom-plugins/*.cs &> /dev/null; then
+  echo 'Custom plugins:'
+  (
+    cd /custom-plugins/
+    ls -1 *.cs | sed 's/\(.*\)\.cs/    \1/'
+  )
   for x in "${custom_plugins[@]}"; do
     echo "    $x"
   done

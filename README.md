@@ -19,8 +19,10 @@ rust from a different computer.
 
 # Prerequisites
 
-- Lots of RAM, especially if you're playing on the same machine as the dedicated
-  server.  This project was developed with 32GB of RAM.
+- 4GB of RAM if the server is remotely hosted (total memory including OS).
+  Alternately, 16GB of RAM if you're going to host a dedicated server and play
+  on the same machine.  These memory recommendations are just estimates and
+  minimum requirements for memory could be much lower.
 - You have [Git installed][git] and cloned this repository to work with locally.
 
   ```
@@ -50,29 +52,41 @@ To completely uninstall and delete all Rust data run the following command.
 
 Remove this Git repository for final cleanup.
 
-### Server Admin Actions
+### Game Server Administration
 
 If you want a shell login to your server, then run the following command from
 the root of this repository.
 
-    ./admin-actions/shell-login.sh
+    ./admin/shell.sh
 
     # alternately if you need root shell access
-    ./admin-actions/shell-login.sh root
+    ./admin/shell.sh root
+
+##### RCON Remote Admin Console
 
 If you want to log into the Rust web RCON interface, then run the following
 command.
 
-    ./admin-actions/get-rcon-pass.sh
+    ./admin/get-rcon-pass.sh
 
 The script will output your RCON password as well as additional instructions for
 your web browser to access the RCON console.
+
+By default, the RCON interface is only accessible from `localhost`.  However, if
+you require remote access, then you can set the `RUST_RCON_INTERFACE` variable
+before starting the server.
+
+```bash
+docker-compose down
+export RUST_RCON_INTERFACE=0.0.0.0
+docker-compose up -d
+```
 
 ### Limiting server resources
 
 In the `docker-compose.yml` file, there's two settings you can adjust to limit
 how much CPU and memory the dedicated server is allowed.  By default, it is set
-to dedicated server recommended values:
+to dedicated server recommended values for extremly high populations:
 
 ```yaml
 cpu_count: 2
@@ -80,7 +94,7 @@ mem_limit: 8gb
 ```
 
 You can adust the resources to your liking.  Generally, I recommend to not set
-the server below `2` CPUs and  `4gb` of memory (RAM).  These policies ensure the
+the server below `2` CPUs and  `2gb` of memory (RAM).  These policies ensure the
 server can't use more than these limits.
 
 # Easy Anti-Cheat

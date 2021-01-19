@@ -103,10 +103,12 @@ Remove this Git repository for final cleanup.
 If you want a shell login to your server, then run the following command from
 the root of this repository.
 
-    ./admin/shell.sh
+```bash
+./admin/shell.sh
 
-    # alternately if you need root shell access
-    ./admin/shell.sh root
+# alternately if you need root shell access
+./admin/shell.sh root
+```
 
 ### RCON: Remote Admin Console
 

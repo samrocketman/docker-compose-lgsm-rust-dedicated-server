@@ -153,15 +153,50 @@ You can remove Rust server plugins from `plugin-configs/plugins.txt` by starting
 the line with a `#`.  This allows you to delete the plugin from the server but
 also keep it around in case  you want to re-enable it later.
 
+# Customize Map
+
+You can have a randomly generated map with a seed or a custom map.
+
+### Generated Maps
+
+> Note: Generated Map settings are completely ignored if you've configured a
+> Custom Map.
+
+You can uncomment and change the following variables in
+[`rust-environment.sh`](rust-environment.sh).
+
+- seed
+- salt
+- worldsize
+
+### Custom Maps
+
+Your custom map file name must end with `.map`.  Download your custom map
+locally to your computer and place it in the [`custom-maps/`](custom-maps/)
+directory.
+
+If you have more than one map, then the first map alphabetically is used.  If
+you would like to have multiple custom maps and change the map, then it is
+recommended you prefix all maps with a 4 digit number.  For example,
+
+```
+0001_custom-map.map
+0002_custom-map.map
+0003_custom-map.map
+... etc
+```
+
 # Road Map
 
 - :heavy_check_mark: Initial working vanilla server
 - :heavy_check_mark: Basic admin actions like shell login and RCON access
 - :heavy_check_mark: Support for adding server mods and automatic mod updates
 - :heavy_check_mark: Limit server resources
-- :heavy_check_mark: Support for customizing initial Map generation on first time startup.
+- :heavy_check_mark: Support for customizing initial Map generation on first
+  time startup.
 - :heavy_check_mark: Support for custom server mods (Oxide plugins)
-- :x: Support for custom Maps.
+- :heavy_check_mark: Support for custom Maps.
+- :x: Improve documentation
 
 [compose]: https://docs.docker.com/compose/install/
 [docker]: https://docs.docker.com/engine/install/

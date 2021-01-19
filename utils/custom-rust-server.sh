@@ -9,20 +9,20 @@ set -ex
 
 export ENABLE_RUST_EAC seed salt worldsize maxplayers servername
 
-function rand_password() {
-  tr -dc -- '0-9a-zA-Z' < /dev/urandom | head -c12;echo
-}
 
 [ -f ./linuxgsm.sh ] || cp /linuxgsm.sh ./
 [ -x ./rustserver ] || ./linuxgsm.sh rustserver
 yes Y | ./rustserver install
-[ -f ./lgsm/mods/rustoxide-files.txt ] || ./rustserver mods-install <<< $'rustoxide\n'
+if ! grep rustoxide lgsm/mods/installed-mods.txt &> /dev/null; then
+  ./rustserver mods-install <<< $'rustoxide\nyes\n'
+fi
 ./rustserver mods-update
 
 # remove passwordless sudo access since setup is complete
 sudo rm -f /etc/sudoers.d/lgsm
 
 /apply-settings.sh
+mkdir -p serverfiles/oxide/plugins
 /get-or-update-plugins.sh
 
 # start rust server

@@ -15,6 +15,10 @@ else
   sed -i '/^ *server\.encryption/d' "$server_cfg"
 fi
 
+function rand_password() {
+  tr -dc -- '0-9a-zA-Z' < /dev/urandom | head -c12;echo
+}
+
 # Map generation settings
 function check-range() {
 # Usage: check-range NUMBER MIN MAX
@@ -66,10 +70,14 @@ function get_custom_map_url() {
   local map_url="$(curl -sfL "$base_url" | grep -o 'href="[^"]\+.map"' | sed 's/.*"\([^"]\+\)"/\1/' | head -n1)"
   echo "${base_url}${map_url}"
 }
+sed -i '/^fn_parms/d' "$lgsm_cfg"
 if ls -1 /custom-maps/*.map &> /dev/null; then
   # custom map found so disabling map settings.
   start_custom_map_server
   export CUSTOM_MAP_URL="$(get_custom_map_url)"
+  cat >> "$lgsm_cfg" <<EOF
+fn_parms(){ parms="-batchmode +app.listenip \${ip} +app.port \${appport} +server.ip \${ip} +server.port \${port} +server.tickrate \${tickrate} +server.hostname \"\${servername}\" +server.identity \"\${selfname}\" +server.maxplayers \${maxplayers} +levelurl '${CUSTOM_MAP_URL}' +server.saveinterval \${saveinterval} +rcon.web \${rconweb} +rcon.ip \${ip} +rcon.port \${rconport} +rcon.password \"\${rconpassword}\" -logfile"; }
+EOF
 fi
 
 if [ ! -f rcon_pass ]; then

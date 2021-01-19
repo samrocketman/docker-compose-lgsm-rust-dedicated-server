@@ -10,6 +10,10 @@
 # uncomment this to enable EAC, for Linux clients this must be commented out
 #ENABLE_RUST_EAC=1
 
+#######################
+# GENERATED MAP SUPPORT
+#######################
+
 # range: 1-2147483647, used to reproduce a procedural map.
 # default: random seed
 #     If you change this value, then a new map will be generated on next boot.
@@ -23,9 +27,16 @@
 # default: 3000, range: 1000-6000, map size in meters.
 #worldsize=3000
 
-# if using the custom-maps/ folder to self-host a map and you're playing
-# multiplayer, then uncomment this to customize the frontend.
+####################
+# CUSTOM MAP SUPPORT
+####################
+# If using a custom map, then generated map settings are ignored.
+
+# When self-hosting a map for multiplayer, MAP_BASE_URL is for providing public
+# IP address in the URL where clients will connect to download your map.
 #MAP_BASE_URL=http://localhost:8000/
 
-
+# CUSTOM_MAP_URL is for posting a link to a publicly available custom map such
+# as a Dropbox download link.
+#    Overrides MAP_BASE_URL
 #CUSTOM_MAP_URL=https://some-url.com/some-map.map

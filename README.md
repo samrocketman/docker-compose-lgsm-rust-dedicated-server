@@ -4,18 +4,18 @@ This project combines Docker, Rust Dedicated Server, and LGSM all in one!  The
 intention is to lower the barrier of entry for Linux users to get a Rust
 dedicated server up quickly with little to  no effort.
 
-# Connecting to your server
+# Play on your server
 
-By default your server is forwarding port 28015/UDP to all interfaces so that
-you can port forward it for friends.
+By default your server is forwarding port `28015/UDP` to all interfaces so that
+you can use router port forwarding to play multiplayer.
 
-If you're playing from Proton on Linux, then press F1 to open console and
-connect with:
+If you're playing on the same machine from Proton on Linux, then press F1 to
+open console and connect with:
 
     client.connect 127.0.0.1:28015
 
 You may need to enter a domain name or alternate IP address if you're playing
-rust from a different computer.
+Rust from a different computer.
 
 # Prerequisites
 
@@ -34,11 +34,35 @@ rust from a different computer.
   unrelated to Rust.
 - Install [docker-compose][compose].  This typically comes separate from Docker.
 
-# Server Uptime Management
+# Getting started
+
+If you don't want to customize anything, then start the server.  It will
+generate a 3K map using a random seed which will persist when restarting the
+server.
+
+    docker-compose up -d
+
+It may take 15 minutes or longer for the server to start the first time
+depending on your internet connection.  This is because it has to download Rust
+among other server setup tasks.  You can monitor the server logs at any time (to
+see progress) with the following command.
+
+    docker-compose logs -f
+
+Press `CTRL+C` to exit logs.
+
+# Server power management
 
 ### Starting the server
 
     docker-compose up -d
+
+It may take at 5 minutes or longer to start depending on your internet
+connection.
+
+See logs with the following command (`CTRL+C` to cancel).
+
+    docker-compose logs -f
 
 ### Graceful shutdown
 
@@ -52,7 +76,9 @@ To completely uninstall and delete all Rust data run the following command.
 
 Remove this Git repository for final cleanup.
 
-### Game Server Administration
+# Game Server Administration
+
+### Login shell
 
 If you want a shell login to your server, then run the following command from
 the root of this repository.
@@ -62,10 +88,16 @@ the root of this repository.
     # alternately if you need root shell access
     ./admin/shell.sh root
 
-##### RCON Remote Admin Console
+### RCON: Remote Admin Console
 
-If you want to log into the Rust web RCON interface, then run the following
-command.
+You can access the Rust RCON interface using any RCON client.  I recommend one
+of the following clients.
+
+- https://facepunch.github.io/webrcon Facepunch official client
+- http://rcon.io/login community RCON client
+
+The RCON interface is password protected.  Reveal the password using the
+following command.
 
     ./admin/get-rcon-pass.sh
 
@@ -97,9 +129,9 @@ You can adust the resources to your liking.  Generally, I recommend to not set
 the server below `2` CPUs and  `2gb` of memory (RAM).  These policies ensure the
 server can't use more than these limits.
 
-# Easy Anti-Cheat
+### Easy Anti-Cheat
 
-By default EAC is disabled for Linux clients.  Enable EAC with the following
+By default, EAC is disabled for Linux clients.  Enable EAC with the following
 shell variable in [`rust-environment.sh`](rust-environment.sh).
 
 
@@ -107,14 +139,22 @@ shell variable in [`rust-environment.sh`](rust-environment.sh).
 export ENABLE_RUST_EAC=1
 ```
 
-If EAS is enabled, Linux clients will not be able to connect and your server
-will be listed in the server browser
+If EAC is enabled, Linux clients will not be able to connect and your server
+will be listed in the in-game server browser.
 
 # Server Mods
 
-This server automatically adds and updates uMod oxide plugins through an easy to
-use `plugin-configs/plugins.txt` file.  Add what plugins you would like in your
-rust server; one plugin per line.
+[Oxide mods](https://umod.org/) and custom mods are supported.
+
+Oxide mods are installed and updated automatically on every server start.
+However, if you have a custom mod that has a name conflict with an official
+Oxide mod, then the custom mod will be used.
+
+### Oxide mods
+
+To automatically install mods, create a new text file:
+[`mod-configs/plugins.txt`](mod-configs).  Add what plugins you would like
+in your rust server; one plugin per line.
 
 For example, let's say you want the following plugins:
 
@@ -122,20 +162,23 @@ For example, let's say you want the following plugins:
 * [Chest Stacks](https://umod.org/plugins/chest-stacks)
 
 The download links for both of those plugins would be `Backpacks.cs` and
-`ChestStacks.cs`.  Your `plugin-configs/plugins.txt` would need to have the
+`ChestStacks.cs`.  Your `mod-configs/plugins.txt` would need to have the
 following contents.
 
 ```bash
-# example plugin-configs/plugins.txt
+# example mod-configs/plugins.txt
 # code comments are supported along with blank lines
 Backpacks
 ChestStacks
 ```
 
-### Updating plugin configuration
+When the server boots, the mods will be automatically downloaded from uMod.  If
+they already exist, then updates will be checked instead.
+
+### Updating mod configuration
 
 Plugins automatically generate plugin config which is accessible by editing
-files in the [`plugin-configs/`](plugin-configs/) directory.  If you edit a JSON
+files in the [`mod-configs/`](mod-configs/) directory.  If you edit a JSON
 config you can open up the web management RCON console to reload the plugin (See
 [Server Admin Actions](#server-admin-actions) for how to access RCON console).
 
@@ -148,22 +191,22 @@ Or to reload all plugins:
     oxide.reload *
 
 Server mods are supported by oxide plugins.  Add your oxide plugins to
-`plugin-configs/plugins.txt` and then start the server normally.  Every time the
+`mod-configs/plugins.txt` and then start the server normally.  Every time the
 server start plugin updates are checked and downloaded.
 
-If you remove a plugin from `plugin-configs/plugins.txt`, then it will be
+If you remove a plugin from `mod-configs/plugins.txt`, then it will be
 deleted from your server automatically.
 
 Use the uMode download name of the plugin.  For example, if you download from
 uMod `Backpacks.cs`, then you need only add `Backpacks` to
-`plugin-configs/plugins.txt`.
+`mod-configs/plugins.txt`.
 
 ### plugins.txt code comments
 
 Lines that start with `#` and blank lines are automatically skipped in
-`plugin-configs/plugins.txt`.
+`mod-configs/plugins.txt`.
 
-You can remove Rust server plugins from `plugin-configs/plugins.txt` by starting
+You can remove Rust server plugins from `mod-configs/plugins.txt` by starting
 the line with a `#`.  This allows you to delete the plugin from the server but
 also keep it around in case  you want to re-enable it later.
 

@@ -49,8 +49,8 @@ services:
         su - linuxgsm -c /custom-rust-server.sh
     volumes:
       - lgsm:/home/linuxgsm
-      - ./plugin-configs/:/home/linuxgsm/serverfiles/oxide/config/:rw
-      - ./custom-plugins/:/custom-plugins/:ro
+      - ./mod-configs/:/home/linuxgsm/serverfiles/oxide/config/:rw
+      - ./custom-mods/:/custom-plugins/:ro
       - ./custom-maps/:/custom-maps/:ro
       - ./utils/custom-rust-server.sh:/custom-rust-server.sh:ro
       - ./utils/get-or-update-plugins.sh:/get-or-update-plugins.sh:ro

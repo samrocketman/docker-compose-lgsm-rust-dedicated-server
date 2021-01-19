@@ -279,6 +279,10 @@ recommended you prefix all maps with a 4 digit number.  For example,
 ... etc
 ```
 
+If you wish to use a Generated Map, then all files ending with `.map` must be
+removed from `custom-maps/` directory.  Just having the custom map file in that
+directory is what enables the Custom Map logic.
+
 # Road Map
 
 - :heavy_check_mark: Initial working vanilla server

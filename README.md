@@ -19,6 +19,7 @@ GSM][lgsm] all in one!  Self-hosted Rust dedicated server management made easy.
 - [Server Mods](#server-mods)
   - [Oxide mods](#oxide-mods)
   - [Custom mods](#custom-mods)
+  - [Troubleshooting: Mods failing to load](#troubleshooting-mods-failing-to-load)
   - [Updating mod configuration](#updating-mod-configuration)
 - [Customize Map](#customize-map)
   - [Generated Maps](#generated-maps)
@@ -235,6 +236,25 @@ following command.
 
 If you delete a custom mod from `custom-mods/` folder, then it will be removed
 from the server automatically.
+
+### Troubleshooting: Mods failing to load
+
+Sometimes, mods will fail to load into Oxide because of differences between
+Windows and Linux.   An example is the following error message.
+
+```
+FurnaceSplitter was compiled successfully in 2345ms
+Unable to find main plugin class: FurnaceSplitter
+No previous version to rollback plugin: FurnaceSplitter
+```
+
+To fix this error run the following command.
+
+    ./admin/bugfix-oxide-plugins.sh
+
+Then, in the RCON console try reloading the oxide plugin.
+
+    oxide.reload FurnaceSplitter
 
 ### Updating mod configuration
 

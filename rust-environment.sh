@@ -40,3 +40,13 @@
 # as a Dropbox download link.
 #    Overrides MAP_BASE_URL
 #CUSTOM_MAP_URL=https://some-url.com/some-map.map
+
+###################
+# ADVANCED SETTINGS
+###################
+
+# Rust server will be monitored.  If the server is down, then the container
+# will be killed and automatically restarted by docker-compose.  If you do not
+# want the container to die when rust shuts down or crashes, then disable this
+# monitoring.
+uptime_monitoring=true

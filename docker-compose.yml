@@ -1,4 +1,4 @@
-version: '2.2'
+version: '2.3'
 volumes:
   lgsm:
 services:
@@ -10,7 +10,7 @@ services:
     init: true
     user: root
     image: gameservermanagers/linuxgsm-docker
-    restart: unless-stopped
+    restart: always
     command:
       - /bin/bash
       - -exc
@@ -46,19 +46,22 @@ services:
         fi
         chown linuxgsm: /home/linuxgsm /home/linuxgsm/serverfiles /home/linuxgsm/serverfiles/oxide
         chown -R linuxgsm: /home/linuxgsm/serverfiles/oxide/config
-        su - linuxgsm -c /custom-rust-server.sh
+        su - linuxgsm -c /utils/custom-rust-server.sh
     volumes:
       - lgsm:/home/linuxgsm
       - ./mod-configs/:/home/linuxgsm/serverfiles/oxide/config/:rw
       - ./custom-mods/:/custom-plugins/:ro
       - ./custom-maps/:/custom-maps/:ro
-      - ./utils/custom-rust-server.sh:/custom-rust-server.sh:ro
-      - ./utils/get-or-update-plugins.sh:/get-or-update-plugins.sh:ro
-      - ./utils/apply-settings.sh:/apply-settings.sh:ro
+      - ./utils/:/utils/:ro
       - ./rust-environment.sh:/rust-environment.sh:ro
     ports:
       - ${RUST_RCON_INTERFACE:-127.0.0.1}:28016:28016
       - 0.0.0.0:28015:28015/udp
       - 0.0.0.0:8000:8000/tcp
+    healthcheck:
+      test: ["CMD", "pgrep", "RustDedicated"]
+      interval: 10s
+      retries: 3
+      start_period: 15m
 #    devices:
 #      - /dev/dri:/dev/dri

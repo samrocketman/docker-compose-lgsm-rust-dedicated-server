@@ -17,8 +17,9 @@ fi
 # remove passwordless sudo access since setup is complete
 sudo rm -f /etc/sudoers.d/lgsm
 
-/apply-settings.sh
-/get-or-update-plugins.sh
+/utils/apply-settings.sh
+/utils/get-or-update-plugins.sh
+/utils/monitor-rust-server.sh &
 
 # start rust server
 ./rustserver start

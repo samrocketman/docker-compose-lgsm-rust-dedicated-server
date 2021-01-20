@@ -70,7 +70,7 @@ function get_custom_map_url() {
   MAP_BASE_URL="${MAP_BASE_URL:-http://localhost:8000/}"
   until curl -sIfLo /dev/null "http://localhost:8000/"; do sleep 1; done
   local map_url="$(curl -sfL "http://localhost:8000/" | grep -o 'href="[^"]\+.map"' | sed 's/.*"\([^"]\+\)"/\1/' | head -n1)"
-  echo "${base_url%/}/${map_url}"
+  echo "${MAP_BASE_URL%/}/${map_url}"
 }
 sed -i '/^fn_parms/d' "$lgsm_cfg"
 if [ -n "${CUSTOM_MAP_URL:-}" ] || ls -1 /custom-maps/*.map &> /dev/null; then

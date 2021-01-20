@@ -4,6 +4,7 @@ This project combines Docker, [Rust][rust] Dedicated Server, and [Linux
 GSM][lgsm] all in one!  Self-hosted Rust dedicated server management made easy.
 
 - [Play on your server](#play-on-your-server)
+- [Playing multiplayer](#playing-multiplayer)
 - [Prerequisites](#prerequisites)
 - [Getting started](#getting-started)
 - [Server power management](#server-power-management)
@@ -22,6 +23,8 @@ GSM][lgsm] all in one!  Self-hosted Rust dedicated server management made easy.
 - [Customize Map](#customize-map)
   - [Generated Maps](#generated-maps)
   - [Custom Maps](#custom-maps)
+    - [Self-hosted custom maps](#self-hosted-custom-maps)
+    - [Remotely hosted custom maps](#remotely-hosted-custom-maps)
 
 # Play on your server
 
@@ -35,6 +38,13 @@ open console and connect with:
 
 You may need to enter a domain name or alternate IP address if you're playing
 Rust from a different computer.
+
+# Playing multiplayer
+
+Enable port forwarding on your router for the following ports.
+
+- `28015/udp` (required for game clients)
+- `8000/tcp` (optional: only required if self-hosting a custom map)
 
 # Prerequisites
 
@@ -264,6 +274,28 @@ You can uncomment and change the following variables in
 
 ### Custom Maps
 
+Please note:
+
+> _Your map file should be hosted on a public web-site that works 24/7, since
+> new players of your server will download the map from that URL, not from your
+> Rust server. If your URL link doesn't work then players that haven't
+> downloaded the map yet won't be able to join the server._
+> - [facepunch Wiki: Hosting a custom map][fp-custom-maps]
+
+There's two ways a custom map is supported.
+
+1. Self-hosted
+2. Remotely hosted
+
+##### Self-hosted custom maps
+
+If you're playing multi-player and self hosting your Map, then there's two extra
+configuration items you must toggle.
+
+- Port forward port `8000/tcp` to your router.
+- Set `MAP_BASE_URL` variable in [`rust-environment.sh`](rust-environment.sh) to
+  your public IP where clients can download the map.
+
 Your custom map file name must end with `.map`.  Download your custom map
 locally to your computer and place it in the [`custom-maps/`](custom-maps/)
 directory.
@@ -283,6 +315,13 @@ If you wish to use a Generated Map, then all files ending with `.map` must be
 removed from `custom-maps/` directory.  Just having the custom map file in that
 directory is what enables the Custom Map logic.
 
+##### Remotely hosted custom maps
+
+If you're using a public file serving service separate from your game server
+(such as Dropbox), then set `CUSTOM_MAP_URL` variable in
+[`rust-environment.sh`](rust-environment.sh).  No extra configuration is
+required.
+
 # Road Map
 
 - :heavy_check_mark: Initial working vanilla server
@@ -300,3 +339,4 @@ directory is what enables the Custom Map logic.
 [git]: https://git-scm.com/
 [lgsm]: https://linuxgsm.com/
 [rust]: https://rust.facepunch.com/
+[fp-custom-maps]: https://wiki.facepunch.com/rust/Hosting_a_custom_map

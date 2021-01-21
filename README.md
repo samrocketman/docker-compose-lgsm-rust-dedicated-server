@@ -14,6 +14,7 @@ GSM][lgsm] all in one!  Self-hosted Rust dedicated server management made easy.
 - [Game Server Administration](#game-server-administration)
   - [Login shell](#login-shell)
   - [RCON: Remote Admin Console](#rcon-remote-admin-console)
+    - [RCON remote access](#rcon-remote-access)
   - [Limiting server resources](#limiting-server-resources)
   - [Easy Anti-Cheat](#easy-anti-cheat)
 - [Server Mods](#server-mods)
@@ -136,9 +137,22 @@ following command.
 The script will output your RCON password as well as additional instructions for
 your web browser to access the RCON console.
 
-By default, the RCON interface is only accessible from `localhost`.  However, if
-you require remote access, then you can set the `RUST_RCON_INTERFACE` variable
-before starting the server.
+##### RCON remote access
+
+Rust RCON connection uses `ws://` websocket protocol.  It does not support
+secure websockets (`wss://`).  Because of this, it is not fit for secure
+internet communication.  All of your passwords would be sent over plain text.
+
+The recommended way to access RCON remotely from Linux is to forward the RCON
+port to your machine over SSH and connecting to the remote host over localhost
+on your own machine.  The following SSH command makes RCON available on
+localhost.
+
+    ssh -vNL 127.0.0.1:28016:127.0.0.1:28016 user@example.com
+
+If you still want your RCON interface to be publicy available (I don't recommend
+this), then you can set the `RUST_RCON_INTERFACE` variable before starting the
+server.
 
 ```bash
 docker-compose down

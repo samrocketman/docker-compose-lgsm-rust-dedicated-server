@@ -10,6 +10,8 @@ services:
     init: true
     user: root
     image: gameservermanagers/linuxgsm-docker
+    # Do not change this from restart: always. Maintenance scripts assume
+    # docker-compose auto restarts the rust server.
     restart: always
     command:
       - /bin/bash

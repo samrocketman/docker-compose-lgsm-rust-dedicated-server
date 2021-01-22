@@ -15,7 +15,7 @@ function limit_output() {
   if [ "$1" = '--all' ]; then
     cat
   else
-    cat | head -n5
+    cat | tail -n5
   fi
 }
 

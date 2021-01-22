@@ -1,5 +1,4 @@
-# Dockerized LGSM Rust Dedicated Server
-
+# Dockerized LGSM Rust Dedicated Server 
 This project combines Docker, [Rust][rust] Dedicated Server, and [Linux
 GSM][lgsm] all in one!  Self-hosted Rust dedicated server management made easy.
 
@@ -175,6 +174,26 @@ mem_limit: 8gb
 You can adust the resources to your liking.  Generally, I recommend to not set
 the server below `2` CPUs and  `2gb` of memory (RAM).  These policies ensure the
 server can't use more than these limits.
+
+### Backup and restore from backup
+
+The following command is compatible with cron jobs and running from the root of
+the repository.
+
+    ./admin/backup/create-backup.sh
+
+If you run `create-backup.sh` from a cron job, then be sure to reference it by
+its full path.
+
+List backups,
+
+    ./admin/backup/list-backups.sh
+
+Will show you what backup files have been created along with their date and time
+of creation.  You could then restore a backup of your choice which would
+destroy the running server in order to restore it from a backup.
+
+    ./admin/backup/restore-backup.sh ./backups/file.tgz
 
 ### Easy Anti-Cheat
 

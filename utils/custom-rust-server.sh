@@ -13,6 +13,10 @@ if ! grep rustoxide lgsm/mods/installed-mods.txt &> /dev/null; then
   ./rustserver mods-install <<< $'rustoxide\nyes\n'
 fi
 ./rustserver mods-update
+if [ ! -f 'serverfiles/RustDedicated_Data/Managed/Oxide.Ext.RustEdit.dll' ]; then
+  curl -fLo serverfiles/RustDedicated_Data/Managed/Oxide.Ext.RustEdit.dll \
+    https://github.com/k1lly0u/Oxide.Ext.RustEdit/raw/master/Oxide.Ext.RustEdit.dll
+fi
 
 # remove passwordless sudo access since setup is complete
 sudo rm -f /etc/sudoers.d/lgsm

@@ -3,7 +3,7 @@
 set -ex
 
 [ ! -r /rust-environment.sh ] || source /rust-environment.sh
-export ENABLE_RUST_EAC CUSTOM_MAP_URL MAP_BASE_URL
+export ENABLE_RUST_EAC CUSTOM_MAP_URL MAP_BASE_URL SELF_HOST_CUSTOM_MAP
 export seed salt worldsize maxplayers servername
 server_cfg=serverfiles/server/rustserver/cfg/server.cfg
 lgsm_cfg=lgsm/config-lgsm/rustserver/rustserver.cfg
@@ -72,8 +72,24 @@ function get_custom_map_url() {
   local map_url="$(curl -sfL "http://localhost:8000/" | grep -o 'href="[^"]\+.map"' | sed 's/.*"\([^"]\+\)"/\1/' | head -n1)"
   echo "${MAP_BASE_URL%/}/${map_url}"
 }
+function unquote-url() {
+  python3 -c 'from urllib.parse import unquote;import sys;print(unquote(sys.stdin.read()).strip())'
+}
+function download-custom-map() {
+  local custom_map="$(echo "${CUSTOM_MAP_URL}" | grep -o '[^/]\+\.map' | unquote-url)"
+  if [ -z "${custom_map:-}" ]; then
+    custom_map='custom-map.map'
+  fi
+  [ -f /custom-maps/"${custom_map}" ] || curl -fLo /custom-maps/"${custom_map}" "${CUSTOM_MAP_URL}"
+}
 sed -i '/^fn_parms/d' "$lgsm_cfg"
+
+
 if [ -n "${CUSTOM_MAP_URL:-}" ] || ls -1 /custom-maps/*.map &> /dev/null; then
+  if [ -n "${CUSTOM_MAP_URL:-}" -a "${SELF_HOST_CUSTOM_MAP:-}" = true ]; then
+    download-custom-map
+    unset CUSTOM_MAP_URL
+  fi
   start_custom_map_server
   if [ -z "${CUSTOM_MAP_URL:-}" ]; then
     export CUSTOM_MAP_URL="$(get_custom_map_url)"

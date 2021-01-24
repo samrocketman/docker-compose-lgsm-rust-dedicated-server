@@ -38,8 +38,13 @@
 
 # CUSTOM_MAP_URL is for posting a link to a publicly available custom map such
 # as a Dropbox download link.
-#    Overrides MAP_BASE_URL
-#CUSTOM_MAP_URL=https://some-url.com/some-map.map
+#    Overrides MAP_BASE_URL unless SELF_HOSTING_CUSTOM_MAP=true
+#CUSTOM_MAP_URL=https://example.com/some-map.map
+
+# Download the CUSTOM_MAP_URL for self hosting.  Set to true to force
+# self-hosting.  The map will be downloaded to the custom-maps/ directory.
+#    Overrides CUSTOM_MAP_URL
+#SELF_HOST_CUSTOM_MAP=false
 
 ###################
 # ADVANCED SETTINGS

@@ -46,6 +46,9 @@ services:
         if [ ! "$$(stat -c '%U' /home/linuxgsm)" = linuxgsm ]; then
           chown -R linuxgsm: /home/linuxgsm
         fi
+        if [ ! "$$(stat -c '%U' /custom-maps)" = linuxgsm ]; then
+          chown -R linuxgsm: /custom-maps
+        fi
         chown linuxgsm: /home/linuxgsm /home/linuxgsm/serverfiles /home/linuxgsm/serverfiles/oxide
         chown -R linuxgsm: /home/linuxgsm/serverfiles/oxide/config
         su - linuxgsm -c /utils/custom-rust-server.sh
@@ -53,7 +56,7 @@ services:
       - lgsm:/home/linuxgsm
       - ./mod-configs/:/home/linuxgsm/serverfiles/oxide/config/:rw
       - ./custom-mods/:/custom-plugins/:ro
-      - ./custom-maps/:/custom-maps/:ro
+      - ./custom-maps/:/custom-maps/:rw
       - ./utils/:/utils/:ro
       - ./rust-environment.sh:/rust-environment.sh:ro
     ports:

@@ -64,7 +64,8 @@ fi
 # Custom Map Support
 function start_custom_map_server() (
   cd /custom-maps/
-  python -m SimpleHTTPServer &
+  pgrep -f SimpleHTTPServer ||
+    python -m SimpleHTTPServer &
 )
 function get_custom_map_url() {
   MAP_BASE_URL="${MAP_BASE_URL:-http://localhost:8000/}"

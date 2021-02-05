@@ -325,6 +325,19 @@ You can uncomment and change the following variables in
 - salt
 - worldsize
 
+If you want to wipe the map and start from another random see, then use
+[`./admin/regenerate-map.sh`](./admin/regenerate-map.sh).  You can also
+reference this script by its full path from a cron job (it will not wipe
+blueprints.
+
+Weekly map wipe (but not BP wipe) cron job:
+
+    @weekly /path/to/admin/regenerate-map.sh skip-prompt
+
+    # or specify time of cron; e.g. every sunday at 1am
+    0 1 * * 7 /path/to/admin/regenerate-map.sh skip-prompt
+
+
 ### Custom Maps
 
 Please note:

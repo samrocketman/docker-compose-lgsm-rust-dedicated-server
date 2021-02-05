@@ -175,6 +175,15 @@ You can adust the resources to your liking.  Generally, I recommend to not set
 the server below `2` CPUs and  `2gb` of memory (RAM).  These policies ensure the
 server can't use more than these limits.
 
+You can inspect server resource usage with the following command.
+
+    docker stats
+
+If you see heavy resource usage and your server is performing poorly, then you
+might need to allocate more resources.  100% CPU usage is fine but if you start
+seeing 600% usage, then that's an indicator you need to start increasing the
+`cpu_count` limit for Rust.
+
 ### Backup and restore from backup
 
 The following command is compatible with cron jobs and running from the root of

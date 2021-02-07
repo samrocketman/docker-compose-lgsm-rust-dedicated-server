@@ -1,6 +1,19 @@
 #!/bin/bash
 
-if ! ls backups/*lgsm-rustserver-backup.tgz &> /dev/null; then
+backup_name="lgsm-rustserver-backup.tgz"
+list_all=false
+
+while [ $# -gt 0 ]; do
+  if [ "$1" = "--all" ]; then
+    list_all=true
+  fi
+  if grep -- 'tgz$' >& /dev/null <<< "$1"; then
+    backup_name="$1"
+  fi
+  shift
+done
+
+if ! ls backups/*"$backup_name" &> /dev/null; then
   echo 'No backups found.'
   exit
 fi
@@ -12,14 +25,14 @@ function print_file() {
 }
 
 function limit_output() {
-  if [ "$1" = '--all' ]; then
+  if [ "$1" = 'true' ]; then
     cat
   else
     cat | tail -n5
   fi
 }
 
-if [ "$1" = '--all' ]; then
+if [ "$list_all" = 'true' ]; then
   echo 'ALL BACKUP FILES'
 else
   echo 'LAST 5 BACKUP FILES (use --all option to show all)'
@@ -27,12 +40,14 @@ fi
 
 python -c 'print("="*95)'
 
-for x in backups/*lgsm-rustserver-backup.tgz; do
+for x in backups/*"$backup_name"; do
 print_file "$x"
-done | limit_output "$1"
+done | limit_output "$list_all"
 python -c 'print("="*95)'
 
-echo
-echo 'Restore your backup with the following command.'
-echo '    ./admin/backup/restore-backup.sh backups/file.tgz'
-echo
+if [ "$backup_name" = 'lgsm-rustserver-backup.tgz' ]; then
+  echo
+  echo 'Restore your backup with the following command.'
+  echo '    ./admin/backup/restore-backup.sh backups/file.tgz'
+  echo
+fi

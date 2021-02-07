@@ -15,6 +15,12 @@ fi
 
 ls "$1" > /dev/null
 
+if [ ! "$(tar -tzf "$1" | head -n1)" = 'lgsm/' ]; then
+  echo "File: $1"
+  echo 'ERROR: File exists but not a valid backup.' >&2
+  exit 1
+fi
+
 cat <<EOF
 WARNING: This is a permanent action.
 

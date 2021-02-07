@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if ! ls backups/*.tgz &> /dev/null; then
+if ! ls backups/*lgsm-rustserver-backup.tgz &> /dev/null; then
   echo 'No backups found.'
   exit
 fi
@@ -27,7 +27,7 @@ fi
 
 python -c 'print("="*95)'
 
-for x in  backups/*.tgz; do
+for x in backups/*lgsm-rustserver-backup.tgz; do
 print_file "$x"
 done | limit_output "$1"
 python -c 'print("="*95)'

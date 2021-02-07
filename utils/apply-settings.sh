@@ -1,20 +1,29 @@
 #!/bin/bash
 
-set -ex
+set -e
 
 [ ! -r /rust-environment.sh ] || source /rust-environment.sh
 export ENABLE_RUST_EAC CUSTOM_MAP_URL MAP_BASE_URL SELF_HOST_CUSTOM_MAP
-export seed salt worldsize maxplayers servername
+export seed salt worldsize maxplayers servername apply_settings_debug_mode
+if [ "${apply_settings_debug_mode:-false}" = true ]; then
+  echo 'docker-compose apply config debug enabled.' >&2
+  set -x
+fi
+
+echo 'Applying server settings from rust-environment.sh:'
+
 server_cfg=serverfiles/server/rustserver/cfg/server.cfg
 lgsm_cfg=lgsm/config-lgsm/rustserver/rustserver.cfg
 
 # disable EAC allowing Linux clients
+sed -i '/^ *server\.secure/d' "$server_cfg"
+sed -i '/^ *server\.encryption/d' "$server_cfg"
 if [ -z "${ENABLE_RUST_EAC:-}" ]; then
-  grep -F -- server.secure "$server_cfg" || echo server.secure 0 >> "$server_cfg"
-  grep -F -- server.encryption "$server_cfg" || echo server.encryption 0 >> "$server_cfg"
+  echo server.secure 0 >> "$server_cfg"
+  echo server.encryption 0 >> "$server_cfg"
+  echo '    EAC Disabled.'
 else
-  sed -i '/^ *server\.secure/d' "$server_cfg"
-  sed -i '/^ *server\.encryption/d' "$server_cfg"
+  echo '    EAC Enabled.'
 fi
 
 function rand_password() {
@@ -31,43 +40,50 @@ i=int(sys.stdin.read());
 exit(0) if i >= $2 and i <= $3 else exit(1)" &> /dev/null <<< "$1"
 }
 function apply-setting() {
+  echo "    $3"
   sed -i "/^ *$2/d" $1
   echo "$3" >> "$1"
 }
-if ( [ -z "$seed" ] || ! check-range "${seed:-invalid}" 1 2147483647 ) &&
-   ! grep -F -- 'seed=' "$lgsm_cfg"; then
-  # random seed; if seed is unset or invalid
-  seed="$(python -c 'from random import randrange;print(randrange(2147483647))')"
-fi
 
+function apply-generated-map-settings() {
+  if [ -z "$worldsize" ] || ! check-range "$worldsize" 1000 6000; then
+    worldsize=3000
+  fi
+  # apply user-customized settings from rust-environment.sh
+  if [ -n "$seed" ]; then
+    apply-setting "$lgsm_cfg" seed "seed=$seed"
+  fi
+  apply-setting "$lgsm_cfg" worldsize "worldsize=$worldsize"
+  if ( [ -z "$seed" ] || ! check-range "${seed:-invalid}" 1 2147483647 ) &&
+     ! grep -F -- 'seed=' "$lgsm_cfg" > /dev/null; then
+    # random seed; if seed is unset or invalid
+    seed="$(python -c 'from random import randrange;print(randrange(2147483647))')"
+  else
+    echo -n '    '
+    grep -F -- 'seed=' "$lgsm_cfg"
+  fi
+  if [ -n "$salt" ]; then
+    apply-setting "$lgsm_cfg" salt "salt=$salt"
+  else
+    sed -i '/^ *salt/d' "$lgsm_cfg"
+  fi
+}
 
-if [ -z "$worldsize" ] || ! check-range "$worldsize" 1000 6000; then
-  worldsize=3000
-fi
+servername="${servername:-Rust}"
+apply-setting "$lgsm_cfg" servername "servername=\"$servername\""
 if [ -z "$maxplayers" ] || ! check-range "$maxplayers" 1 1000000; then
   maxplayers=50
 fi
-servername="${servername:-Rust}"
-# apply user-customized settings from rust-environment.sh
-if [ -n "$seed" ]; then
-  apply-setting "$lgsm_cfg" seed "seed=$seed"
-fi
-apply-setting "$lgsm_cfg" worldsize "worldsize=$worldsize"
 apply-setting "$lgsm_cfg" maxplayers "maxplayers=$maxplayers"
-apply-setting "$lgsm_cfg" servername "servername=\"$servername\""
-if [ -n "$salt" ]; then
-  apply-setting "$lgsm_cfg" salt "salt=$salt"
-else
-  sed -i '/^ *salt/d' "$lgsm_cfg"
-fi
 
 # Custom Map Support
-function start_custom_map_server() (
+function start-custom-map-server() (
   cd /custom-maps/
-  pgrep -f SimpleHTTPServer ||
+  pgrep -f SimpleHTTPServer > /dev/null ||
     python -m SimpleHTTPServer &
+  echo '    Custom map server started on port 8000.' >&2
 )
-function get_custom_map_url() {
+function get-custom-map-url() {
   MAP_BASE_URL="${MAP_BASE_URL:-http://localhost:8000/}"
   until curl -sIfLo /dev/null "http://localhost:8000/"; do sleep 1; done
   local map_url="$(curl -sfL "http://localhost:8000/" | grep -o 'href="[^"]\+.map"' | sed 's/.*"\([^"]\+\)"/\1/' | head -n1)"
@@ -81,7 +97,10 @@ function download-custom-map() {
   if [ -z "${custom_map:-}" ]; then
     custom_map='custom-map.map'
   fi
-  [ -f /custom-maps/"${custom_map}" ] || curl -fLo /custom-maps/"${custom_map}" "${CUSTOM_MAP_URL}"
+  [ -f /custom-maps/"${custom_map}" ] || (
+    echo '    Downloading custom map: '"${CUSTOM_MAP_URL}" >&2
+    curl --retry 3 --retry-delay 10 -sfLo /custom-maps/"${custom_map}" "${CUSTOM_MAP_URL}"
+  )
 }
 sed -i '/^fn_parms/d' "$lgsm_cfg"
 
@@ -91,14 +110,17 @@ if [ -n "${CUSTOM_MAP_URL:-}" ] || ls -1 /custom-maps/*.map &> /dev/null; then
     download-custom-map
     unset CUSTOM_MAP_URL
   fi
-  start_custom_map_server
+  start-custom-map-server
   if [ -z "${CUSTOM_MAP_URL:-}" ]; then
-    export CUSTOM_MAP_URL="$(get_custom_map_url)"
+    export CUSTOM_MAP_URL="$(get-custom-map-url)"
   fi
   # custom map found so disabling map settings.
   cat >> "$lgsm_cfg" <<EOF
 fn_parms(){ parms="-batchmode +app.listenip \${ip} +app.port \${appport} +server.ip \${ip} +server.port \${port} +server.tickrate \${tickrate} +server.hostname \"\${servername}\" +server.identity \"\${selfname}\" +server.maxplayers \${maxplayers} +levelurl '${CUSTOM_MAP_URL}' +server.saveinterval \${saveinterval} +rcon.web \${rconweb} +rcon.ip \${ip} +rcon.port \${rconport} +rcon.password \"\${rconpassword}\" -logfile"; }
 EOF
+  echo '    Custom Map URL for clients: '"${CUSTOM_MAP_URL}"
+else
+  apply-generated-map-settings
 fi
 
 if [ ! -f rcon_pass ]; then

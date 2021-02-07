@@ -15,6 +15,8 @@ GSM][lgsm] all in one!  Self-hosted Rust dedicated server management made easy.
   - [RCON: Remote Admin Console](#rcon-remote-admin-console)
     - [RCON remote access](#rcon-remote-access)
   - [Limiting server resources](#limiting-server-resources)
+  - [Backup and restore from backup](#backup-and-restore-from-backup)
+  - [Log management](#log-management)
   - [Easy Anti-Cheat](#easy-anti-cheat)
 - [Server Mods](#server-mods)
   - [Oxide mods](#oxide-mods)
@@ -203,6 +205,22 @@ of creation.  You could then restore a backup of your choice which would
 destroy the running server in order to restore it from a backup.
 
     ./admin/backup/restore-backup.sh ./backups/file.tgz
+
+### Log management
+
+There's a few scripts to help you manage logs and log size on disk in the Rust
+server.  The following script will create a backup of all LGSM and server logs.
+
+    ./admin/logs/create-backup.sh
+
+To list known log file backups run the following command.
+
+    ./admin/logs/list-backups.sh
+
+Logs over time can take up a lot of disk storage.  To reclaim disk space and
+deleted unused logs, run the following command.
+
+    ./admin/logs/clean.sh
 
 ### Easy Anti-Cheat
 

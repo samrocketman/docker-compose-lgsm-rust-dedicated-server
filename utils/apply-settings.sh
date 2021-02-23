@@ -50,14 +50,15 @@ function apply-generated-map-settings() {
     worldsize=3000
   fi
   # apply user-customized settings from rust-environment.sh
+  apply-setting "$lgsm_cfg" worldsize "worldsize=$worldsize"
   if [ -n "$seed" ]; then
     apply-setting "$lgsm_cfg" seed "seed=$seed"
   fi
-  apply-setting "$lgsm_cfg" worldsize "worldsize=$worldsize"
   if ( [ -z "$seed" ] || ! check-range "${seed:-invalid}" 1 2147483647 ) &&
      ! grep -F -- 'seed=' "$lgsm_cfg" > /dev/null; then
     # random seed; if seed is unset or invalid
     seed="$(python -c 'from random import randrange;print(randrange(2147483647))')"
+    apply-setting "$lgsm_cfg" seed "seed=$seed"
   else
     echo -n '    '
     grep -F -- 'seed=' "$lgsm_cfg"

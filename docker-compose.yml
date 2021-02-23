@@ -51,7 +51,8 @@ services:
         fi
         chown linuxgsm: /home/linuxgsm /home/linuxgsm/serverfiles /home/linuxgsm/serverfiles/oxide
         chown -R linuxgsm: /home/linuxgsm/serverfiles/oxide/config
-        su - linuxgsm -c /utils/custom-rust-server.sh
+        rm -f ~linuxgsm/linuxgsm.sh
+        su - linuxgsm -c "LINUX_GSM_VERSION=\"${LINUX_GSM_VERSION:-v20.4.1}\" /utils/custom-rust-server.sh"
     volumes:
       - lgsm:/home/linuxgsm
       - ./mod-configs/:/home/linuxgsm/serverfiles/oxide/config/:rw

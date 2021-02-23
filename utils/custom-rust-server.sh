@@ -6,7 +6,15 @@
 
 set -ex
 
-[ -f ./linuxgsm.sh ] || cp /linuxgsm.sh ./
+[ -f ./linuxgsm.sh ] || (
+  if [ -n "${LINUX_GSM_VERSION:-}" ]; then
+    curl -fLo linuxgsm.sh \
+      https://raw.githubusercontent.com/GameServerManagers/LinuxGSM/"${LINUX_GSM_VERSION}"/linuxgsm.sh
+    chmod 755 linuxgsm.sh
+  else
+    cp /linuxgsm.sh ./
+  fi
+)
 [ -x ./rustserver ] || ./linuxgsm.sh rustserver
 yes Y | ./rustserver install
 if ! grep rustoxide lgsm/mods/installed-mods.txt &> /dev/null; then

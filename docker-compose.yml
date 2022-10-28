@@ -19,7 +19,7 @@ services:
       - |
         # MAIN
         apt-get update
-        apt-get install -y dos2unix rsync sudo vim nano libgdiplus
+        apt-get install -y dos2unix rsync sudo vim nano libgdiplus python3.8-venv
         #grant access to video card for direct rendering (not used by rust ds)
         #function get_video_gid() {
         #  find /dev/dri -maxdepth 1 -type c | head -n1 | xargs stat -c %g
@@ -48,6 +48,12 @@ services:
         fi
         if [ ! "$$(stat -c '%U' /custom-maps)" = linuxgsm ]; then
           chown -R linuxgsm: /custom-maps
+        fi
+        python3 -m venv /home/linuxgsm/.venv
+        grep -F .venv ~linuxgsm/.bash_profile || echo 'source /home/linuxgsm/.venv/bin/activate' > ~linuxgsm/.bash_profile
+        grep -F .venv ~linuxgsm/.bashrc || echo 'source /home/linuxgsm/.venv/bin/activate' > ~linuxgsm/.bashrc
+        if [ ! "$$(stat -c '%U' /home/linuxgsm/.venv)" = linuxgsm ]; then
+          chown -R linuxgsm: /home/linuxgsm/.venv
         fi
         chown linuxgsm: /home/linuxgsm /home/linuxgsm/serverfiles /home/linuxgsm/serverfiles/oxide
         chown -R linuxgsm: /home/linuxgsm/serverfiles/oxide/config

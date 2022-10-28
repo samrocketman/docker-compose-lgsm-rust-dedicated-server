@@ -26,6 +26,21 @@ else
   echo '    EAC Enabled.'
 fi
 
+# Checks for minimum version of python.  Will check the minor or higher.
+#   * 2.7 will look for python 2.7 or higher but only for python 2.
+#   * 3.2 will look for python 3.2 or higher but only for python 3.
+# Example: minimum python 3.8
+function minimum() (
+  exec &> /dev/null
+  local major="${2%.*}"
+  local minor="${2#*.}"
+  if ! type -P "$1"; then
+    return false
+  fi
+  python -c 'import platform,sys; check=lambda x,y,z: x.startswith(y) and int(x.split(".")[0:2][-1]) >= z; sys.exit(0) if check(platform.python_version(), sys.argv[1], int(sys.argv[2])) else sys.exit(1)' \
+  "${major}" "${minor}"
+)
+
 function rand_password() {
   tr -dc -- '0-9a-zA-Z' < /dev/urandom | head -c12;echo
 }
@@ -80,8 +95,17 @@ apply-setting "$lgsm_cfg" maxplayers "maxplayers=$maxplayers"
 # Custom Map Support
 function start-custom-map-server() (
   cd /custom-maps/
-  pgrep -f SimpleHTTPServer > /dev/null ||
-    python -m SimpleHTTPServer &
+  if ! pgrep -f SimpleHTTPServer > /dev/null; then
+    if minimum python '3.2'; then
+      python -m http.server &
+    elif minimum python3 '3.2'; then
+      python3 -m http.server &
+    elif minimum python '2.7'; then
+      python -m SimpleHTTPServer &
+    else
+      echo 'ERROR: could not find suitable python version.' >&2
+      exit 1
+    fi
   echo '    Custom map server started on port 8000.' >&2
 )
 function get-custom-map-url() {

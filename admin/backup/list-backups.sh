@@ -3,6 +3,20 @@
 backup_name="lgsm-rustserver-backup.tgz"
 list_all=false
 
+function python() {
+  if type -P python3 > /dev/null; then
+    command python3 "$@"
+  elif type -P python > /dev/null; then
+    command python "$@"
+  else
+    echo 'Python 2 or 3 could not be found. You may make it available via virtualenv.' >&2
+    echo '    python3 -m venv .venv' >&2
+    echo '    source .venv/bin/activate' >&2
+    echo 'Note: you can run "deactivate" to unload venv.' >&2
+    exit 1
+  fi
+}
+
 while [ $# -gt 0 ]; do
   if [ "$1" = "--all" ]; then
     list_all=true

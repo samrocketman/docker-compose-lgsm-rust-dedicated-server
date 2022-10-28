@@ -1,3 +1,4 @@
 /*.tgz
 /backups
 /plugins.txt
+.venv

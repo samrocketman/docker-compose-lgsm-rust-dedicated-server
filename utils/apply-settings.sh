@@ -93,7 +93,7 @@ fi
 apply-setting "$lgsm_cfg" maxplayers "maxplayers=$maxplayers"
 
 # Custom Map Support
-function start-custom-map-server() {
+function start-custom-map-server() (
   cd /custom-maps/
   if ! pgrep -f SimpleHTTPServer > /dev/null; then
     if minimum python '3.2'; then
@@ -108,7 +108,7 @@ function start-custom-map-server() {
     fi
   fi
   echo '    Custom map server started on port 8000.' >&2
-}
+)
 function get-custom-map-url() {
   MAP_BASE_URL="${MAP_BASE_URL:-http://localhost:8000/}"
   until curl -sIfLo /dev/null "http://localhost:8000/"; do sleep 1; done

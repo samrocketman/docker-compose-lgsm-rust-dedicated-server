@@ -106,6 +106,7 @@ function start-custom-map-server() (
       echo 'ERROR: could not find suitable python version.' >&2
       exit 1
     fi
+  fi
   echo '    Custom map server started on port 8000.' >&2
 )
 function get-custom-map-url() {

@@ -2,6 +2,10 @@
 
 set -e
 
+if ! type -p python && type -p python3; then
+  python() { python3 "$@"; }
+fi
+
 [ ! -r /rust-environment.sh ] || source /rust-environment.sh
 export ENABLE_RUST_EAC CUSTOM_MAP_URL MAP_BASE_URL SELF_HOST_CUSTOM_MAP
 export seed salt worldsize maxplayers servername apply_settings_debug_mode

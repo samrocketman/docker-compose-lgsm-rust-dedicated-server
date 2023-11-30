@@ -19,7 +19,7 @@ services:
       - |
         # MAIN
         apt-get update
-        apt-get install -y dos2unix rsync sudo vim nano libgdiplus python3.8-venv
+        apt-get install -y dos2unix rsync sudo vim nano libgdiplus python3.8-venv lib32z1
         #grant access to video card for direct rendering (not used by rust ds)
         #function get_video_gid() {
         #  find /dev/dri -maxdepth 1 -type c | head -n1 | xargs stat -c %g

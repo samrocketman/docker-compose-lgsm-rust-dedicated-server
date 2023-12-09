@@ -28,6 +28,7 @@ GSM][lgsm] all in one!  Self-hosted Rust dedicated server management made easy.
   - [Custom Maps](#custom-maps)
     - [Self-hosted custom maps](#self-hosted-custom-maps)
     - [Remotely hosted custom maps](#remotely-hosted-custom-maps)
+    - [Observer Island](#observer-island)
 
 # Play on your server
 
@@ -297,6 +298,11 @@ following command.
 If you delete a custom mod from `custom-mods/` folder, then it will be removed
 from the server automatically.
 
+### Harmony mods
+
+Add Harmony mods to [`harmony-mods`](harmony-mods) folder.  It will be available
+to your Rust maps such as [Observer Island][map-obs-isle].
+
 ### Troubleshooting: Mods failing to load
 
 Sometimes, mods will fail to load into Oxide because of differences between
@@ -415,6 +421,33 @@ If you're using a public file serving service separate from your game server
 [`rust-environment.sh`](rust-environment.sh).  No extra configuration is
 required.
 
+##### Observer Island
+
+If you want to play locally for yourself only, then setup is very straight
+forward.
+
+```
+
+cd custom-maps/
+unzip ~/Downloads/observer-island.zip
+
+# the map should be in the current directory
+ls
+# next move the harmony mods to the appropriate location
+mv Mods/* ../harmony-mods/
+
+# clean up remaining files so that only the map remains
+rm -r changelog.txt Mods observer-island-* Prefabs/
+
+# go back to the root of this repository and start the dedicated server
+cd ..
+docker-compose up -d
+```
+
+After about 5 minutes you should be able to connect to `localhost:28015`.  If
+you want to make this map available for multiplayer within your LAN or worldwide
+refer to the previous sections for custom map hosting for remote play.
+
 # Road Map
 
 - :heavy_check_mark: Initial working vanilla server
@@ -429,7 +462,8 @@ required.
 
 [compose]: https://docs.docker.com/compose/install/
 [docker]: https://docs.docker.com/engine/install/
+[fp-custom-maps]: https://wiki.facepunch.com/rust/Hosting_a_custom_map
 [git]: https://git-scm.com/
 [lgsm]: https://linuxgsm.com/
+[map-obs-isle]: https://lone.design/product/observer-island/
 [rust]: https://rust.facepunch.com/
-[fp-custom-maps]: https://wiki.facepunch.com/rust/Hosting_a_custom_map

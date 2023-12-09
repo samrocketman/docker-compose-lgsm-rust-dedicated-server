@@ -426,8 +426,7 @@ required.
 If you want to play locally for yourself only, then setup is very straight
 forward.
 
-```
-
+```bash
 cd custom-maps/
 unzip ~/Downloads/observer-island.zip
 

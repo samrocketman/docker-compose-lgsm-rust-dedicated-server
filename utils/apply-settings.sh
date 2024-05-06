@@ -10,7 +10,7 @@ fi
 export ENABLE_RUST_EAC CUSTOM_MAP_URL MAP_BASE_URL SELF_HOST_CUSTOM_MAP
 export seed salt worldsize maxplayers servername apply_settings_debug_mode
 if [ "${apply_settings_debug_mode:-false}" = true ]; then
-  echo 'docker-compose apply config debug enabled.' >&2
+  echo 'docker compose apply config debug enabled.' >&2
   set -x
 fi
 

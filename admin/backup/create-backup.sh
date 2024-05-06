@@ -23,7 +23,7 @@ export BACKUP_FILE
 
 [ -d backups ] || mkdir backups
 
-docker-compose exec -Tu linuxgsm lgsm /bin/bash -ex > backups/"$BACKUP_FILE" <<'EOF'
+docker compose exec -Tu linuxgsm lgsm /bin/bash -ex > backups/"$BACKUP_FILE" <<'EOF'
 BACKUP_DIRS=(
   lgsm
   serverfiles/server

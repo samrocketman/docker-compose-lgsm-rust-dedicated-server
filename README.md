@@ -59,13 +59,13 @@ Enable port forwarding on your router for the following ports.
 - You have [Git installed][git] and cloned this repository to work with locally.
 
   ```
-  git clone https://github.com/samrocketman/docker-compose-lgsm-rust-dedicated-server
+  git clone https://github.com/samrocketman/docker compose-lgsm-rust-dedicated-server
   ```
 
 - Install [Docker on Linux][docker].  Docker on Windows or Mac would probably
   work but is entirely untested.  Docker for Mac has known performance issues
   unrelated to Rust.
-- Install [docker-compose][compose].  This typically comes separate from Docker.
+- Install [docker compose][compose].  This typically comes separate from Docker.
 
 # Getting started
 
@@ -73,14 +73,14 @@ If you don't want to customize anything, then start the server.  It will
 generate a 3K map using a random seed which will persist when restarting the
 server.
 
-    docker-compose up -d
+    docker compose up -d
 
 It may take 15 minutes or longer for the server to start the first time
 depending on your internet connection.  This is because it has to download Rust
 among other server setup tasks.  You can monitor the server logs at any time (to
 see progress) with the following command.
 
-    docker-compose logs -f
+    docker compose logs -f
 
 Press `CTRL+C` to exit logs.
 
@@ -88,24 +88,24 @@ Press `CTRL+C` to exit logs.
 
 ### Starting the server
 
-    docker-compose up -d
+    docker compose up -d
 
 It may take at 5 minutes or longer to start depending on your internet
 connection.
 
 See logs with the following command (`CTRL+C` to cancel).
 
-    docker-compose logs -f
+    docker compose logs -f
 
 ### Graceful shutdown
 
-    docker-compose down
+    docker compose down
 
 ### Uninstallation
 
 To completely uninstall and delete all Rust data run the following command.
 
-    docker-compose down -v --rmi all
+    docker compose down -v --rmi all
 
 Remove this Git repository for final cleanup.
 
@@ -157,14 +157,14 @@ this), then you can set the `RUST_RCON_INTERFACE` variable before starting the
 server.
 
 ```bash
-docker-compose down
+docker compose down
 export RUST_RCON_INTERFACE=0.0.0.0
-docker-compose up -d
+docker compose up -d
 ```
 
 ### Limiting server resources
 
-In the [`docker-compose.yml`](docker-compose.yml) file, there's two settings you
+In the [`docker compose.yml`](docker compose.yml) file, there's two settings you
 can adjust to limit how much CPU and memory the dedicated server is allowed.  By
 default, it is set to dedicated server recommended values for extremly high
 populations:
@@ -440,7 +440,7 @@ rm -r changelog.txt Mods observer-island-* Prefabs/
 
 # go back to the root of this repository and start the dedicated server
 cd ..
-docker-compose up -d
+docker compose up -d
 ```
 
 After about 5 minutes you should be able to connect to `localhost:28015`.  If

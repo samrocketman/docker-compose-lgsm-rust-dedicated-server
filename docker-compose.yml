@@ -64,6 +64,7 @@ services:
       - ./custom-mods/:/custom-plugins/:ro
       - ./custom-maps/:/custom-maps/:rw
       - ./harmony-mods:/home/linuxgsm/serverfiles/HarmonyMods
+      - ./harmony-config:/home/linuxgsm/serverfiles/HarmonyConfig
       - ./utils/:/utils/:ro
       - ./rust-environment.sh:/rust-environment.sh:ro
     ports:

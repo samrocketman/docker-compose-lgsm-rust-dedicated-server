@@ -164,7 +164,7 @@ docker compose up -d
 
 ### Limiting server resources
 
-In the [`docker compose.yml`](docker compose.yml) file, there's two settings you
+In the [`docker-compose.yml`](docker-compose.yml) file, there's two settings you
 can adjust to limit how much CPU and memory the dedicated server is allowed.  By
 default, it is set to dedicated server recommended values for extremly high
 populations:

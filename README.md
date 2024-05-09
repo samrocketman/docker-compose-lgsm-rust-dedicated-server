@@ -59,7 +59,7 @@ Enable port forwarding on your router for the following ports.
 - You have [Git installed][git] and cloned this repository to work with locally.
 
   ```
-  git clone https://github.com/samrocketman/docker compose-lgsm-rust-dedicated-server
+  git clone https://github.com/samrocketman/docker-compose-lgsm-rust-dedicated-server
   ```
 
 - Install [Docker on Linux][docker].  Docker on Windows or Mac would probably

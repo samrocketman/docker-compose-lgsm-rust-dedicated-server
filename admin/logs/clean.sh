@@ -6,7 +6,7 @@ if [ ! -d .git -a ! -d admin ]; then
 fi
 
 echo 'List of log files:'
-docker-compose exec -T lgsm find log -type f -name '*[0-9]*' -exec du -ch {} + |
+docker compose exec -T lgsm find log -type f -name '*[0-9]*' -exec du -ch {} + |
   awk '
 $2 == "total" {
   total=$1;
@@ -36,12 +36,12 @@ if [ ! "$response" = y -a ! "$response" = Y ]; then
   exit
 fi
 
-docker-compose exec -T lgsm find log -type f -name '*[0-9]*' -exec rm -f {} +
+docker compose exec -T lgsm find log -type f -name '*[0-9]*' -exec rm -f {} +
 
 cat <<'EOF'
 Restart your server to complete cleanup.  Run the following commands.
 
-    docker-compose down
-    docker-compose up -d
+    docker compose down
+    docker compose up -d
 
 EOF

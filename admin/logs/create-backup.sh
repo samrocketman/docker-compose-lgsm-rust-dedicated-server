@@ -22,7 +22,7 @@ BACKUP_FILE="$(date  +%Y-%d-%m-%s)"_lgsm-logs-backup.tgz
 export BACKUP_FILE
 
 [ -d backups ] || mkdir backups
-docker-compose exec -Tu linuxgsm lgsm tar -czv log > backups/"$BACKUP_FILE"
+docker compose exec -Tu linuxgsm lgsm tar -czv log > backups/"$BACKUP_FILE"
 (
 echo
 echo -n 'Created backup file: '

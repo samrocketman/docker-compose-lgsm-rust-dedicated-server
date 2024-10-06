@@ -47,20 +47,59 @@ function upgrade_plugins() {
 
 #
 # Add new plugins
-#
 function add_new_plugins() {
-  while read plugin; do
-    if [ -z "$plugin" ] || [ -f "$plugin_dir"/"$plugin".cs ]; then
+  retry_limit=5  
+  retry_delay=5  
+  while IFS= read -r plugin || [[ -n "$plugin" ]]; do
+    # Trim leading/trailing whitespace and remove any special characters that might break the URL
+    plugin=$(echo "$plugin" | xargs | sed 's/[^a-zA-Z0-9_-]//g')
+    if [ -z "$plugin" ] || [ -f "$plugin_dir/$plugin.cs" ]; then
       continue
     fi
-    if [ ! -f "${plugin_dir}/${plugin}.cs" ]; then
-      if curl -sIfLo /dev/null https://umod.org/plugins/"${plugin}".cs && \
-         curl -sfL https://umod.org/plugins/"${plugin}".cs > "${plugin_dir}/${plugin}".cs; then
-        added_plugins+=( "${plugin}" )
+
+    echo "Checking plugin: $plugin"
+    function download_plugin() {
+      local retries=0
+      local success=false
+      while [ $retries -lt $retry_limit ]; do
+        http_status=$(curl -sI -w "%{http_code}" -o /dev/null "https://umod.org/plugins/${plugin}.cs")
+        if [ "$http_status" -eq 200 ]; then
+          if curl -sfL "https://umod.org/plugins/${plugin}.cs" -o "${plugin_dir}/${plugin}.cs"; then
+            added_plugins+=( "$plugin" )
+            echo "Successfully added plugin: $plugin"
+            success=true
+            break
+          else
+            echo "Error: Failed to download plugin: $plugin" >&2
+            break
+          fi
+        elif [ "$http_status" -eq 429 ]; then
+          # Rate limit encountered
+          echo "Rate limit reached. Waiting for $retry_delay seconds before retrying..." >&2
+          sleep $retry_delay
+          retries=$((retries + 1))
+          retry_delay=$((retry_delay * 2))  # Exponential backoff
+        else
+          echo "Error: Plugin $plugin not found on the server or could not connect (HTTP $http_status)." >&2
+          break
+        fi
+      done
+
+      if [ "$success" = false ]; then
+        echo "Failed to add plugin: $plugin after $retries retries." >&2
       fi
-    fi
+    }
+
+    download_plugin
+
   done <<< "$(grep -v '^ *$\|^ *#' "$plugin_txt")"
+  if [ "${#added_plugins[@]}" -gt 0 ]; then
+    echo "The following plugins were added successfully: ${added_plugins[*]}"
+  else
+    echo "No new plugins were added."
+  fi
 }
+
 
 #
 # Remove old plugins

@@ -6,6 +6,8 @@
 set -e
 plugin_dir=/home/linuxgsm/serverfiles/oxide/plugins
 plugin_txt=/home/linuxgsm/serverfiles/oxide/config/plugins.txt
+export TMP_DIR="$(mktemp -d)"
+trap '[ ! -d "$TMP_DIR" ] || rm -rf "$TMP_DIR"' EXIT
 if [ ! -f "$plugin_txt" ];  then
   plugin_txt=/dev/null
 fi
@@ -26,6 +28,21 @@ function hash_stdin() {
 #
 # Check for plugin updates
 #
+function get_plugin_name_by_class() {
+  awk '
+  $0 ~ /namespace/ {nextclass=1};
+  nextclass == 1 && $0 ~ /class [a-zA-Z]+/ {
+    for(i=1; i<NF+1; i++) {
+      if($i == "class") {
+        c=i
+        break
+      }
+    };
+    print $(c+1);
+    exit
+  }
+  '
+}
 function upgrade_plugins() {
   local plugin_name
   while read plugin; do
@@ -48,12 +65,13 @@ function upgrade_plugins() {
 #
 # Add new plugins
 function add_new_plugins() {
-  retry_limit=5  
-  retry_delay=5  
+  retry_limit=5
+  retry_delay=5
   while IFS= read -r plugin || [[ -n "$plugin" ]]; do
     # Trim leading/trailing whitespace and remove any special characters that might break the URL
     plugin=$(echo "$plugin" | xargs | sed 's/[^a-zA-Z0-9_-]//g')
-    if [ -z "$plugin" ] || [ -f "$plugin_dir/$plugin.cs" ]; then
+    found_plugin="$(find "$plugin_dir" -type f -iname "${plugin}.cs")"
+    if [ -z "$plugin" ] || [ -n "${found_plugin}" ]; then
       continue
     fi
 
@@ -64,9 +82,11 @@ function add_new_plugins() {
       while [ $retries -lt $retry_limit ]; do
         http_status=$(curl -sI -w "%{http_code}" -o /dev/null "https://umod.org/plugins/${plugin}.cs")
         if [ "$http_status" -eq 200 ]; then
-          if curl -sfL "https://umod.org/plugins/${plugin}.cs" -o "${plugin_dir}/${plugin}.cs"; then
-            added_plugins+=( "$plugin" )
-            echo "Successfully added plugin: $plugin"
+          if curl -sSfLo "${TMP_DIR}/${plugin}.cs" "https://umod.org/plugins/${plugin}.cs" && \
+              plugin_name="$(get_plugin_name_by_class < "${TMP_DIR}/${plugin}.cs")" && \
+              mv "${TMP_DIR}/${plugin}.cs" "${plugin_dir}/${plugin_name}.cs"; then
+            added_plugins+=( "$plugin_name" )
+            echo "Successfully added plugin: $plugin_name"
             success=true
             break
           else
@@ -111,7 +131,7 @@ function remove_plugins() {
     fi
     plugin_name="${plugin##*/}"
     plugin_name="${plugin_name%.cs}"
-    if ! grep -v '^ *$\|^ *#' "$plugin_txt" | grep "${plugin_name}" > /dev/null &&
+    if ! grep -v '^ *$\|^ *#' "$plugin_txt" | grep -i "${plugin_name}" > /dev/null &&
        [ ! -f "/custom-plugins/${plugin_name}.cs" ]; then
       rm -f "${plugin}"
       removed_plugins+=( "$plugin_name" )
